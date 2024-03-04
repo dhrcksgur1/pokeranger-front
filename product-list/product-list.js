@@ -26,8 +26,8 @@ function addAllElements() {
 function addAllEvents() {}
 
 async function addProductItemsToContainer() {
-  const { category } = getUrlParams();
-  console.log(category)
+  //const { category } = getUrlParams();
+  //console.log(category)
   const products = await Api.get(`/products`);
 
   for (const product of products) {
