@@ -29,23 +29,13 @@ async function addImageCardsToSlider() {
 
   for (const category of categories) {
     // 객체 destructuring
-    const { id, title, description, themeClass, imageKey } = category;
+    const { id, name} = category;
 
     sliderDiv.insertAdjacentHTML(
       "beforeend",
       `
       <div class="card" id="category-${id}">
-        <div class="notification ${themeClass}">
-          <p class="title is-3 is-spaced">${title}</p>
-          <p class="subtitle is-6">${description}</p>
-        </div>
-        <div class="card-image">
-          <figure class="image is-3by2">
-            <img
-              src="${imageKey}"
-              alt="카테고리 이미지"
-            />
-          </figure>
+          <p class="title is-3 is-spaced">${name}</p>
         </div>
       </div>
     `
