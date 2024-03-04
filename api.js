@@ -7,7 +7,7 @@ async function get(endpoint, params = "") {
 
    // 기본 호스트 주소를 localhost:8080으로 변경
    const baseUrl = 'http://localhost:8080';
-   const apiUrl = params ? `${baseUrl}/${endpoint}/${params}` : `${baseUrl}/${endpoint}`;
+   const apiUrl = params ? `${baseUrl}${endpoint}/${params}` : `${baseUrl}/${endpoint}`;
     console.trace('Current Call Stack: get ');
    console.log(`%cGET 요청: ${apiUrl} `, "color: #a25cd1;");
 
