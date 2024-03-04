@@ -1,4 +1,8 @@
 
+
+//  let baseUrl =""
+
+
 async function get(endpoint, params = "") {
 
    // 기본 호스트 주소를 localhost:8080으로 변경
@@ -9,6 +13,8 @@ async function get(endpoint, params = "") {
   // 토큰이 있으면 Authorization 헤더를 포함, 없으면 포함하지 않음
   const token = sessionStorage.getItem("token");
   const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
+
 
   const res = await fetch(apiUrl, { headers });
 

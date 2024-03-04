@@ -46,6 +46,7 @@ async function handleSubmit(e) {
   try {
     const data = { email, password };
 
+    // TODO 포케매니저 호스팅주소로 바꿔주기
     const result = await Api.post("localhost:8080/login", data);
     const { token, isAdmin } = result;
 

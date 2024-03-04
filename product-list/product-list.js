@@ -28,13 +28,13 @@ function addAllEvents() {}
 async function addProductItemsToContainer() {
   const { category } = getUrlParams();
   console.log(category)
-  const products = await Api.get(`/products/lists?categoryTitle=${category}`);
+  const products = await Api.get(`/products`);
 
   for (const product of products) {
     // 객체 destructuring
-    const { id, title, shortDescription, imageKey, isRecommended, price } =
+    const { id, name, price, stock, description, images, createdAt, updatedAt} =
       product;
-    const imageUrl = await getImageUrl(imageKey);
+    const imageUrl = await getImageUrl(images);
     const random = randomId();
 
     productItemContainer.insertAdjacentHTML(
@@ -52,14 +52,10 @@ async function addProductItemsToContainer() {
         <div class="media-content">
           <div class="content">
             <p class="title">
-              ${title}
-              ${
-                isRecommended
-                  ? '<span class="tag is-success is-rounded">추천</span>'
-                  : ""
-              }
+              ${name}
+             
             </p>
-            <p class="description">${shortDescription}</p>
+            <p class="description">${description}</p>
             <p class="price">${addCommas(price)}원</p>
           </div>
         </div>
@@ -70,7 +66,8 @@ async function addProductItemsToContainer() {
     const productItem = document.querySelector(`#a${random}`);
     productItem.addEventListener(
       "click",
-      navigate(`/product/detail?id=${id}`)
+      navigate(`/product/detail?id=${id}`)  // 이게 뭔지 모르겠다.. 왜 poroduct폴더안의 detail이 없는데
+      // 어떻게 product-detail 폴더의 product-detail .html 로 열리는 걸까 
     );
   }
 }
