@@ -1,12 +1,13 @@
 
+    // VM 벡엔드 도메인으로
+   //const baseUrl = 'http://34.64.187.23:8080';
 
-//  let baseUrl =""
+   // 기본 호스트 주소를 localhost:8080으로 변경
+ const baseUrl = 'http://localhost:8080';
 
 
 async function get(endpoint, params = "") {
 
-   // 기본 호스트 주소를 localhost:8080으로 변경
-   const baseUrl = 'http://34.64.187.23:8080';
    const apiUrl = params ? `${baseUrl}${endpoint}/${params}` : `${baseUrl}${endpoint}`;
     console.trace('Current Call Stack: get ');
    console.log(`%cGET 요청: ${apiUrl} `, "color: #a25cd1;");
@@ -14,7 +15,6 @@ async function get(endpoint, params = "") {
   // 토큰이 있으면 Authorization 헤더를 포함, 없으면 포함하지 않음
   const token = sessionStorage.getItem("token");
   const headers = token ? { Authorization: `Bearer ${token}` } : {};
-
 
 
   const res = await fetch(apiUrl, { headers });
@@ -32,8 +32,7 @@ async function get(endpoint, params = "") {
 }
 
 async function post(endpoint, data) {
-   // 기본 호스트 주소를 localhost:8080으로 변경
-     const baseUrl = 'http://34.64.187.23:8080';
+
      const apiUrl = params ? `${baseUrl}${endpoint}/${params}` : `${baseUrl}${endpoint}`;
       console.trace('Current Call Stack: get ');
      console.log(`%cGET 요청: ${apiUrl} `, "color: #a25cd1;");
@@ -71,8 +70,7 @@ async function post(endpoint, data) {
 
 // api 로 PATCH 요청 (/endpoint/params 로, JSON 데이터 형태로 요청함)
 async function patch(endpoint, params = "", data) {
- // 기본 호스트 주소를 localhost:8080으로 변경
-   const baseUrl = 'http://34.64.187.23:8080';
+
    const apiUrl = params ? `${baseUrl}${endpoint}/${params}` : `${baseUrl}${endpoint}`;
     console.trace('Current Call Stack: get ');
    console.log(`%cGET 요청: ${apiUrl} `, "color: #a25cd1;");
@@ -108,8 +106,7 @@ async function patch(endpoint, params = "", data) {
 // 아래 함수명에 관해, delete 단어는 자바스크립트의 reserved 단어이기에,
 // 여기서는 우선 delete 대신 del로 쓰고 아래 export 시에 delete로 alias 함.
 async function del(endpoint, params = "", data = {}) {
- // 기본 호스트 주소를 localhost:8080으로 변경
-   const baseUrl = 'http://34.64.187.23:8080';
+
    const apiUrl = params ? `${baseUrl}${endpoint}/${params}` : `${baseUrl}${endpoint}`;
     console.trace('Current Call Stack: get ');
    console.log(`%cGET 요청: ${apiUrl} `, "color: #a25cd1;");
