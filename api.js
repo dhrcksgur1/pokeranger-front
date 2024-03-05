@@ -8,6 +8,7 @@
 
 async function get(endpoint, params = "") {
 
+  try{
    const apiUrl = params ? `${baseUrl}${endpoint}/${params}` : `${baseUrl}${endpoint}`;
    console.log(`%cGET 요청: ${apiUrl} `, "color: #a25cd1;");
 
@@ -28,6 +29,8 @@ async function get(endpoint, params = "") {
 
   const result = await res.json();
   return result;
+}
+catch{}
 }
 
 async function post(endpoint, data) {
