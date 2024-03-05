@@ -26,9 +26,14 @@ function addAllElements() {
 function addAllEvents() {}
 
 async function addProductItemsToContainer() {
-  const { categoryId } = getUrlParams();
-  console.log(categoryId);
-  const products = await Api.get(`/products/category/${categoryId}`);
+  const path = window.location.pathname;
+  const id = path.split('/').pop();
+  console.log(id);
+  const products = await Api.get(`/products/category/${id}`);
+
+  if(!products){
+    return
+  }else{
 
   for (const product of products) {
     // 객체 destructuring
@@ -69,5 +74,6 @@ async function addProductItemsToContainer() {
       navigate(`/product/detail?id=${id}`)  // 이게 뭔지 모르겠다.. 왜 poroduct폴더안의 detail이 없는데
       // 어떻게 product-detail 폴더의 product-detail .html 로 열리는 걸까 
     );
+  }
   }
 }
