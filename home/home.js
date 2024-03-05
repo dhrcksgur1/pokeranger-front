@@ -29,7 +29,7 @@ async function addImageCardsToSlider() {
 
   for (const category of categories) {
     // 객체 destructuring
-    const { id, name} = category;
+    const { id, name, createAt, DeleteAt} = category;
 
     sliderDiv.insertAdjacentHTML(
       "beforeend",
