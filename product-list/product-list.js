@@ -28,7 +28,7 @@ function addAllEvents() {}
 async function addProductItemsToContainer() {
   //const { category } = getUrlParams();
   //console.log(category)
-  const products = await Api.get(`/products/category/{categoryId}`);
+  const products = await Api.get(`/product/category/1`);
 
   for (const product of products) {
     // 객체 destructuring

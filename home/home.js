@@ -43,7 +43,7 @@ async function addImageCardsToSlider() {
 
     const card = document.querySelector(`#category-${id}`);
 
-    card.addEventListener("click", navigate(`/product/category/{categoryId}`));
+    card.addEventListener("click", navigate(`/product/category/${id}`));
   }
 }
 
