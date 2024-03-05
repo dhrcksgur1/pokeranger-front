@@ -1,7 +1,7 @@
 
     // VM 벡엔드 도메인으로
  //const baseUrl = 'http://34.64.187.23:8080';
-const baseUrl =  'http://kdt-cloud-1-team03.elicecoding.com/'
+const baseUrl =  'http://kdt-cloud-1-team03.elicecoding.com:8080'
    // 기본 호스트 주소를 localhost:8080으로 변경
 // const baseUrl = 'http://127.0.0.1:8080';
 
