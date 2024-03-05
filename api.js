@@ -9,7 +9,6 @@
 async function get(endpoint, params = "") {
 
    const apiUrl = params ? `${baseUrl}${endpoint}/${params}` : `${baseUrl}${endpoint}`;
-    console.trace('Current Call Stack: get ');
    console.log(`%cGET 요청: ${apiUrl} `, "color: #a25cd1;");
 
   // 토큰이 있으면 Authorization 헤더를 포함, 없으면 포함하지 않음
