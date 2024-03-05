@@ -3,7 +3,7 @@
    //const baseUrl = 'http://34.64.187.23:8080';
 
    // 기본 호스트 주소를 localhost:8080으로 변경
- const baseUrl = 'http://localhost:8080';
+ const baseUrl = 'http://127.0.0.1:8080';
 
 
 async function get(endpoint, params = "") {
