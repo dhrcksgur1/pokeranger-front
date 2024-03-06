@@ -16,7 +16,7 @@ const detailDescriptionTag = document.querySelector("#detailDescriptionTag");
 const addToCartButton = document.querySelector("#addToCartButton");
 const purchaseButton = document.querySelector("#purchaseButton");
 
-checkUrlParams("id");
+// checkUrlParams("id");
 addAllElements();
 addAllEvents();
 
@@ -30,32 +30,35 @@ function addAllElements() {
 function addAllEvents() {}
 
 async function insertProductData() {
-  const { id } = getUrlParams();
+  const path = window.location.pathname;
+  const id = path.split('/').pop();
   const product = await Api.get(`/products/${id}`);
+
+
 
   // 객체 destructuring
   const {
-    title,
-    detailDescription,
-    menufacturer,
-    imageKey,
-    isRecommended,
+    name,
+    description,
+    // menufacturer,
+    images,
+    // isRecommended,
     price,
   } = product;
-  const imageUrl = await getImageUrl(imageKey);
+  const imageUrl = await getImageUrl(images);
 
   productImageTag.src = imageUrl;
-  titleTag.innerText = title;
-  detailDescriptionTag.innerText = detailDescription;
-  manufacturerTag.innerText = menufacturer;
+  titleTag.innerText = name;
+  detailDescriptionTag.innerText = description;
   priceTag.innerText = `${addCommas(price)}원`;
+  // manufacturerTag.innerText = menufacturer;
 
-  if (isRecommended) {
-    titleTag.insertAdjacentHTML(
-      "beforeend",
-      '<span class="tag is-success is-rounded">추천</span>'
-    );
-  }
+  // if (isRecommended) {
+  //   titleTag.insertAdjacentHTML(
+  //     "beforeend",
+  //     '<span class="tag is-success is-rounded">추천</span>'
+  //   );
+  // }
 
   addToCartButton.addEventListener("click", async () => {
     try {
