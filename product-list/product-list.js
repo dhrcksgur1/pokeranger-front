@@ -29,6 +29,7 @@ function addAllElements() {
 function addAllEvents() {}
 
 
+
 async function addProductItemsToContainer() {
 
   const path = window.location.pathname;
@@ -46,6 +47,7 @@ async function addProductItemsToContainer() {
   productItemContainer.innerHTML = '';
 
   for (const product of productData) {
+
     // 객체 destructuring
     const { id, name, price, stock, description, images, createdAt, updatedAt} =
       product;
