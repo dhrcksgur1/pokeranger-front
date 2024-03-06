@@ -45,21 +45,22 @@ async function insertProductsfromCart() {
   console.log(products);
   products.forEach(async (product) => {
     // 객체 destructuring
-    const { _id, name, description, price, quantity,stock, images, createdAt, updatedAt } = product;
+    const { id, name, description, price, quantity,stock, images, createdAt, updatedAt } = product;
     // const imageUrl = await getImageUrl(imageKey);
+    console.log(id);
 
-    const isSelected = selectedIds.includes(_id);
+    const isSelected = selectedIds.includes(id);
 
     cartProductsContainer.insertAdjacentHTML(
       "beforeend",
       `
-        <div class="cart-product-item" id="productItem-${_id}">
+        <div class="cart-product-item" id="productItem-${id}">
           <label class="checkbox">
-            <input type="checkbox" id="checkbox-${_id}" ${
+            <input type="checkbox" id="checkbox-${id}" ${
         isSelected ? "checked" : ""
       } />
           </label>
-          <button class="delete-button" id="delete-${_id}">
+          <button class="delete-button" id="delete-${id}">
             <span class="icon">
               <i class="fas fa-trash-can"></i>
             </span>
@@ -67,11 +68,11 @@ async function insertProductsfromCart() {
           <figure class="image is-96x96">
           </figure>
           <div class="content">
-            <p id="title-${_id}">${compressString(name)}</p>
+            <p id="title-${id}">${compressString(name)}</p>
             <div class="quantity">
               <button 
                 class="button is-rounded" 
-                id="minus-${_id}" 
+                id="minus-${id}" 
                 ${quantity <= 1 ? "disabled" : ""}
                 ${isSelected ? "" : "disabled"}
               >
@@ -81,7 +82,7 @@ async function insertProductsfromCart() {
               </button>
               <input
                 class="input"
-                id="quantityInput-${_id}"
+                id="quantityInput-${id}"
                 type="number"
                 min="1"
                 max="99"
@@ -90,7 +91,7 @@ async function insertProductsfromCart() {
               />
               <button 
                 class="button is-rounded" 
-                id="plus-${_id}"
+                id="plus-${id}"
                 ${quantity >= 99 ? "disabled" : ""}
                 ${isSelected ? "" : "disabled"}
               >
@@ -101,19 +102,19 @@ async function insertProductsfromCart() {
             </div>
           </div>
           <div class="calculation">
-            <p id="unitPrice-${_id}">${addCommas(price)}원</p>
+            <p id="unitPrice-${id}">${addCommas(price)}원</p>
             <p>
               <span class="icon">
                 <i class="fas fa-thin fa-xmark"></i>
               </span>
             </p>
-            <p id="quantity-${_id}">${quantity}</p>
+            <p id="quantity-${id}">${quantity}</p>
             <p>
               <span class="icon">
                 <i class="fas fa-thin fa-equals"></i>
               </span>
             </p>
-            <p id="total-${_id}">${addCommas(quantity * price)}원</p>
+            <p id="total-${id}">${addCommas(quantity * price)}원</p>
           </div>
         </div>
       `
@@ -121,32 +122,32 @@ async function insertProductsfromCart() {
 
     // 각종 이벤트 추가
     document
-      .querySelector(`#delete-${_id}`)
-      .addEventListener("click", () => deleteItem(_id));
+      .querySelector(`#delete-${id}`)
+      .addEventListener("click", () => deleteItem(id));
 
     document
-      .querySelector(`#checkbox-${_id}`)
-      .addEventListener("change", () => toggleItem(_id));
+      .querySelector(`#checkbox-${id}`)
+      .addEventListener("change", () => toggleItem(id));
 
     // document
-    //   .querySelector(`#image-${_id}`)
-    //   .addEventListener("click", navigate(`/product/${_id}`));
+    //   .querySelector(`#image-${id}`)
+    //   .addEventListener("click", navigate(`/product/${id}`));
 
     document
-      .querySelector(`#title-${_id}`)
-      .addEventListener("click", navigate(`/product/${_id}`));
+      .querySelector(`#title-${id}`)
+      .addEventListener("click", navigate(`/product/${id}`));
 
     document
-      .querySelector(`#plus-${_id}`)
-      .addEventListener("click", () => increaseItemQuantity(_id));
+      .querySelector(`#plus-${id}`)
+      .addEventListener("click", () => increaseItemQuantity(id));
 
     document
-      .querySelector(`#minus-${_id}`)
-      .addEventListener("click", () => decreaseItemQuantity(_id));
+      .querySelector(`#minus-${id}`)
+      .addEventListener("click", () => decreaseItemQuantity(id));
 
     document
-      .querySelector(`#quantityInput-${_id}`)
-      .addEventListener("change", () => handleQuantityInput(_id));
+      .querySelector(`#quantityInput-${id}`)
+      .addEventListener("change", () => handleQuantityInput(id));
   });
 }
 
@@ -451,12 +452,12 @@ async function updateOrderSummary(id, type) {
     }
 
     if (isRemoveTemp) {
-      data.selectedIds = data.selectedIds.filter((_id) => _id !== id);
+      data.selectedIds = data.selectedIds.filter((id) => id !== id);
     }
 
     if (isRemovePermanent) {
-      data.ids = data.ids.filter((_id) => _id !== id);
-      data.selectedIds = data.selectedIds.filter((_id) => _id !== id);
+      data.ids = data.ids.filter((id) => id !== id);
+      data.selectedIds = data.selectedIds.filter((id) => id !== id);
     }
 
     if (!isDeleteWithoutChecked) {
