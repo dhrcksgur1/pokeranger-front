@@ -32,6 +32,8 @@ async function get(endpoint, params = "") {
   }
   catch{}
 }
+catch{}
+}
 
 async function post(endpoint, data) {
 
