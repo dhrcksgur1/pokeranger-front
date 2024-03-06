@@ -38,7 +38,10 @@ async function addProductItemsToContainer() {
 
   const productData = products.content;  // 'content' 키에 접근
 
-  for (const product of productData) {
+  if(!products){
+    return
+  }
+  for (const product of products) {
     // 객체 destructuring
     const { id, name, price, stock, description, images, createdAt, updatedAt} =
       product;

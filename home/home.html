@@ -38,7 +38,8 @@
   <!-- 커스텀 css, js -->
   <link rel="stylesheet" href="/home/home.css" />
   <script src="/home/home.js" type="module" defer></script>
-  <script src="../login/login.js"></script>
+  <script src="../login/login.js" type="module" defer></script>
+
 </head>
 <body>
 <!-- 헤더 -->
@@ -105,7 +106,7 @@
         }
 
         async function test() {
-          get("/products/1")
+          get("/products/category/1")
         }
       </script>
       <button id="test" onclick="test()">
@@ -135,4 +136,6 @@
   </div>
 </section>
 </body>
+<script src="/home/home.js" type="module" defer></script>
+<script src="../login/login.js" type="module" ></script>
 </html>
