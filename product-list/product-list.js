@@ -12,7 +12,9 @@ import {
 // 요소(element), input 혹은 상수
 const productItemContainer = document.querySelector("#producItemContainer");
 
-//checkUrlParams("category");
+let pageNumber = 0;  // 현재 페이지 번호
+const pageSize = 10;  // 한 페이지에 보여줄 아이템의 수
+// checkUrlParams("category");
 addAllElements();
 addAllEvents();
 
@@ -20,20 +22,30 @@ addAllEvents();
 function addAllElements() {
   //createNavbar();
   addProductItemsToContainer();
+  createPagination();
 }
 
 // addEventListener들을 묶어주어서 코드를 깔끔하게 하는 역할임.
 function addAllEvents() {}
 
+
 async function addProductItemsToContainer() {
-  //const { category } = getUrlParams();
-  //console.log(category)
-  const products = await Api.get(`/product/category/1`);
+
+  const path = window.location.pathname;
+  const id = path.split('/').pop();
+  console.log(pageNumber);
+  const products = await Api.get(`/products/category/${id}?page=${pageNumber}&size=${pageSize}`);
+  console.log(pageNumber);
+  console.log(products);
 
   if(!products){
     return
   }
-  for (const product of products) {
+
+  const productData = products.content;  // 'content' 키에 접근
+  productItemContainer.innerHTML = '';
+
+  for (const product of productData) {
     // 객체 destructuring
     const { id, name, price, stock, description, images, createdAt, updatedAt} =
       product;
@@ -66,11 +78,34 @@ async function addProductItemsToContainer() {
       `
     );
 
+
+
     const productItem = document.querySelector(`#a${random}`);
     productItem.addEventListener(
       "click",
-      navigate(`/product/detail?id=${id}`)  // 이게 뭔지 모르겠다.. 왜 poroduct폴더안의 detail이 없는데
-      // 어떻게 product-detail 폴더의 product-detail .html 로 열리는 걸까 
+      navigate(`/product/${id}`)
     );
+  }
+
+}
+
+async function createPagination() {
+  const path = window.location.pathname;
+  const id = path.split('/').pop();
+  const totalProducts = await Api.get(`/products/category/${id}`);
+
+  const totalPages = totalProducts.totalPages; // 'totalPages' 키에 접근
+
+  const paginationContainer = document.getElementById('pagination');
+  paginationContainer.innerHTML = ''; // 기존의 페이지네이션 버튼을 초기화합니다.
+
+  for(let i = 0; i < totalPages; i++) {
+    const button = document.createElement('button');
+    button.innerText = i + 1;
+    button.addEventListener('click', function() {
+      pageNumber = i;
+      addProductItemsToContainer();
+    });
+    paginationContainer.appendChild(button);
   }
 }
