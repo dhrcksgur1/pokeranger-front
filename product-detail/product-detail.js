@@ -34,6 +34,8 @@ async function insertProductData() {
   const id = path.split('/').pop();
   const product = await Api.get(`/products/${id}`);
 
+
+
   // 객체 destructuring
   const {
     name,

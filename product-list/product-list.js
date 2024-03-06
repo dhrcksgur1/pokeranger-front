@@ -30,12 +30,15 @@ async function addProductItemsToContainer() {
   const id = path.split('/').pop();
   console.log(id);
   const products = await Api.get(`/products/category/${id}`);
+  console.log(products);
 
   if(!products){
     return
-  }else{
+  }
 
-  for (const product of products) {
+  const productData = products.content;  // 'content' 키에 접근
+
+  for (const product of productData) {
     // 객체 destructuring
     const { id, name, price, stock, description, images, createdAt, updatedAt} =
       product;
@@ -73,6 +76,5 @@ async function addProductItemsToContainer() {
       "click",
       navigate(`/product/${id}`)
     );
-  }
   }
 }
