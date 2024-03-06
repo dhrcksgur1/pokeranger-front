@@ -30,6 +30,9 @@ async function addProductItemsToContainer() {
   //console.log(category)
   const products = await Api.get(`/product/category/1`);
 
+  if(!products){
+    return
+  }
   for (const product of products) {
     // 객체 destructuring
     const { id, name, price, stock, description, images, createdAt, updatedAt} =
