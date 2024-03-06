@@ -42,10 +42,11 @@ async function insertProductsfromCart() {
   const products = await getFromDb("cart");
   const { selectedIds } = await getFromDb("order", "summary");
 
+  console.log(products);
   products.forEach(async (product) => {
     // 객체 destructuring
-    const { _id, title, quantity, imageKey, price } = product;
-    const imageUrl = await getImageUrl(imageKey);
+    const { _id, name, description, price, quantity,stock, images, createdAt, updatedAt } = product;
+    // const imageUrl = await getImageUrl(imageKey);
 
     const isSelected = selectedIds.includes(_id);
 
@@ -64,14 +65,9 @@ async function insertProductsfromCart() {
             </span>
           </button>
           <figure class="image is-96x96">
-            <img
-              id="image-${_id}"
-              src="${imageUrl}"
-              alt="product-image"
-            />
           </figure>
           <div class="content">
-            <p id="title-${_id}">${compressString(title)}</p>
+            <p id="title-${_id}">${compressString(name)}</p>
             <div class="quantity">
               <button 
                 class="button is-rounded" 
@@ -132,13 +128,13 @@ async function insertProductsfromCart() {
       .querySelector(`#checkbox-${_id}`)
       .addEventListener("change", () => toggleItem(_id));
 
-    document
-      .querySelector(`#image-${_id}`)
-      .addEventListener("click", navigate(`/product/detail?id=${_id}`));
+    // document
+    //   .querySelector(`#image-${_id}`)
+    //   .addEventListener("click", navigate(`/product/${_id}`));
 
     document
       .querySelector(`#title-${_id}`)
-      .addEventListener("click", navigate(`/product/detail?id=${_id}`));
+      .addEventListener("click", navigate(`/product/${_id}`));
 
     document
       .querySelector(`#plus-${_id}`)

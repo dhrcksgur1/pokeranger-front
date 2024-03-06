@@ -12,7 +12,7 @@ import {
 // 요소(element), input 혹은 상수
 const productItemContainer = document.querySelector("#producItemContainer");
 
-//checkUrlParams("category");
+// checkUrlParams("category");
 addAllElements();
 addAllEvents();
 
@@ -71,8 +71,7 @@ async function addProductItemsToContainer() {
     const productItem = document.querySelector(`#a${random}`);
     productItem.addEventListener(
       "click",
-      navigate(`/product/detail?id=${id}`)  // 이게 뭔지 모르겠다.. 왜 poroduct폴더안의 detail이 없는데
-      // 어떻게 product-detail 폴더의 product-detail .html 로 열리는 걸까 
+      navigate(`/product/${id}`)
     );
   }
   }
