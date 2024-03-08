@@ -103,12 +103,9 @@ async function insertOrderSummary() {
   const hasItemToCheckout = selectedIds.length !== 0;
 
   if (!hasItemInCart) {
-    const categorys = await Api.get("/api/categorylist");
-    const categoryTitle = randomPick(categorys).title;
-
     alert(`구매할 제품이 없습니다. 제품을 선택해 주세요.`);
 
-    return window.location.replace(`/product/list?category=${categoryTitle}`);
+    return window.location.replace("/");
   }
 
   if (!hasItemToCheckout) {
@@ -121,13 +118,13 @@ async function insertOrderSummary() {
   let productsTitle = "";
 
   for (const id of selectedIds) {
-    const { title, quantity } = await getFromDb("cart", id);
+    const { name, quantity } = await getFromDb("cart", id);
     // 첫 제품이 아니라면, 다음 줄에 출력되도록 \n을 추가함
     if (productsTitle) {
       productsTitle += "\n";
     }
 
-    productsTitle += `${title} / ${quantity}개`;
+    productsTitle += `${name} / ${quantity}개`;
   }
 
   productsTitleElem.innerText = productsTitle;
@@ -145,12 +142,14 @@ async function insertOrderSummary() {
 }
 
 async function insertUserData() {
-  const userData = await Api.get("/user");
-  const { fullName, phoneNumber, address } = userData;
+  const path = window.location.pathname;
+  const userId = path.split('/').pop();
+  const userData = await Api.get(`/users/${userId}`);
+  const { name, phoneNumber, address } = userData;
 
   // 만약 db에 데이터 값이 있었다면, 배송지정보에 삽입
-  if (fullName) {
-    receiverNameInput.value = fullName;
+  if (name) {
+    receiverNameInput.value = name;
   }
 
   if (phoneNumber) {
@@ -254,7 +253,7 @@ async function doCheckout() {
       });
     }
 
-    // 입력된 배송지정보를 유저db에 등록함
+    // -- 보류 -- 입력된 배송지정보를 유저db에 등록함
     const data = {
       phoneNumber: receiverPhoneNumber,
       address: {
