@@ -115,15 +115,16 @@ function handleImageUpload() {
 
 // 선택할 수 있는 카테고리 종류를 api로 가져와서, 옵션 태그를 만들어 삽입함.
 async function addOptionsToSelectBox() {
-  const categorys = await Api.get("/categories");
-  categorys.forEach((category) => {
+  const categories = await Api.get("/categories");
+  console.log(categories);
+  categories.forEach((category) => {
     // 객체 destructuring
-    const { _id, title, themeClass } = category;
+    const { id, name, themeClass } = category;
 
     categorySelectBox.insertAdjacentHTML(
       "beforeend",
       `
-      <option value=${_id} class="notification ${themeClass}"> ${title} </option>`
+      <option value=${id} class="notification ${themeClass}"> ${name} </option>`
     );
   });
 }
