@@ -1,9 +1,9 @@
 
     // VM 벡엔드 도메인으로
  //const baseUrl = 'http://34.64.187.23:8080';
-//const baseUrl =  'http://kdt-cloud-1-team03.elicecoding.com:8080'
+const baseUrl =  'http://kdt-cloud-1-team03.elicecoding.com:8080'
    // 기본 호스트 주소를 localhost:8080으로 변경
- const baseUrl = 'http://127.0.0.1:8080';
+ // const baseUrl = 'http://127.0.0.1:8080';
 
 
 async function get(endpoint, params = "") {
@@ -11,6 +11,8 @@ async function get(endpoint, params = "") {
   try{
    const apiUrl = params ? `${baseUrl}${endpoint}/${params}` : `${baseUrl}${endpoint}`;
    console.log(`%cGET 요청: ${apiUrl} `, "color: #a25cd1;");
+   console.log(`%cGET 요청: ${endpoint} `, "color: #a25cd3;");
+   console.log(`%cGET 요청: ${params} `, "color: #a25cd5;");
 
   // 토큰이 있으면 Authorization 헤더를 포함, 없으면 포함하지 않음
   const token = sessionStorage.getItem("token");
