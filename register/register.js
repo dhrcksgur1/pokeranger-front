@@ -25,13 +25,13 @@ function addAllEvents() {
 async function handleSubmit(e) {
   e.preventDefault();
 
-  const fullName = fullNameInput.value;
+  const name = fullNameInput.value;
   const email = emailInput.value;
   const password = passwordInput.value;
   const passwordConfirm = passwordConfirmInput.value;
 
   // 잘 입력했는지 확인
-  const isFullNameValid = fullName.length >= 2;
+  const isFullNameValid = name.length >= 2;
   const isEmailValid = validateEmail(email);
   const isPasswordValid = password.length >= 4;
   const isPasswordSame = password === passwordConfirm;
