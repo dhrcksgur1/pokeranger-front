@@ -49,7 +49,7 @@ async function handleSubmit(e) {
     // TODO 포케매니저 호스팅주소로 바꿔주기
       const result = await Api.post("/users/login", data);
       console.log(result);
-      const { token, isAdmin } = result;
+      const { token, isAdmin, userId } = result;
       console.log(token);
       console.log(isAdmin);
 
@@ -57,7 +57,7 @@ async function handleSubmit(e) {
 
     // 로그인 성공, 토큰을 세션 스토리지에 저장
     sessionStorage.setItem("token", token);
-
+    sessionStorage.setItem("userId", userId);
     alert(`정상적으로 로그인되었습니다.`);
 
     // 로그인 성공
