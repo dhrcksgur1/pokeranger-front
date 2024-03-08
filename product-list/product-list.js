@@ -87,6 +87,7 @@ async function addProductItemsToContainer() {
       "click",
       navigate(`/product/${id}`)
     );
+    console.log(id);
   }
 
 }

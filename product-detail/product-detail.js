@@ -31,11 +31,12 @@ function addAllEvents() {}
 
 async function insertProductData() {
   const path = window.location.pathname;
+  console.log(path);
   const id = path.split('/').pop();
-  const product = await Api.get(`/products/${id}`);
+  const newId = parseInt(id);
+  const product = await Api.get(`/products/${newId}`);
 
-
-
+console.log(newId);
   // 객체 destructuring
   const {
     name,
@@ -46,6 +47,8 @@ async function insertProductData() {
     price,
   } = product;
   const imageUrl = await getImageUrl(images);
+
+  console.log(name,description,images);
 
   productImageTag.src = imageUrl;
   titleTag.innerText = name;
