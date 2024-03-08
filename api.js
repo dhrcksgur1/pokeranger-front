@@ -1,9 +1,9 @@
 
     // VM 벡엔드 도메인으로
-   const baseUrl = 'http://34.64.187.23:8080';
-
+ //const baseUrl = 'http://34.64.187.23:8080';
+//const baseUrl =  'http://kdt-cloud-1-team03.elicecoding.com:8080'
    // 기본 호스트 주소를 localhost:8080으로 변경
- // const baseUrl = 'http://localhost:8080';
+ const baseUrl = 'http://127.0.0.1:8080';
 
 
 async function get(endpoint, params = "") {
@@ -29,18 +29,17 @@ async function get(endpoint, params = "") {
 
   const result = await res.json();
   return result;
-  }
-  catch{}
+}
+catch{}
 }
 
 async function post(endpoint, data) {
 
-     const apiUrl = params ? `${baseUrl}${endpoint}/${params}` : `${baseUrl}${endpoint}`;
+     const apiUrl = `${baseUrl}${endpoint}`;
       console.trace('Current Call Stack: get ');
-     console.log(`%cGET 요청: ${apiUrl} `, "color: #a25cd1;");
+    console.log(`%cpost 요청: ${apiUrl} `, "color: #a25cd1;");
 
-  const bodyData = JSON.stringify(data);
-  console.log(`%cPOST 요청: ${apiUrl}`, "color: #296aba;");
+    const bodyData = JSON.stringify(data);
   console.log(`%cPOST 요청 데이터: ${bodyData}`, "color: #296aba;");
 
   // 토큰이 있으면 Authorization 헤더를 포함, 없으면 포함하지 않음
@@ -48,7 +47,10 @@ async function post(endpoint, data) {
   const headers = {
     "Content-Type": "application/json",
     ...(token && { Authorization: `Bearer ${token}` }),
-  };
+    };
+
+    console.log(token);
+    console.log(headers);
 
   const res = await fetch(apiUrl, {
     method: "POST",
