@@ -1,9 +1,9 @@
 import { randomId } from "./useful-functions.js";
 
 // AWS S3 설정
-const s3BucketName = "elice-shoppingmall";
+const s3BucketName = "pokeranger-image-storage";
 const bucketRegion = "ap-northeast-2"; // 한국은 항상 ap-northeast-2임.
-const IdentityPoolId = "ap-northeast-2:5e7a5d7d-e6ed-462c-b302-f5663eb5fb0d";
+const IdentityPoolId = "ap-northeast-2:d415ca97-fadd-41fe-b0ec-c10b5b4bf7e9";
 
 AWS.config.update({
   region: bucketRegion,
@@ -21,7 +21,9 @@ var s3 = new AWS.S3({
 
 // 이미지를 S3에 업로드하는 함수
 async function addImageToS3(file, album) {
-  try {
+    console.log("aws로 넘왔습니다");
+
+    try {
     if (!file)
     {
         console.log("file is null");
@@ -58,7 +60,6 @@ console.log(upload);
   {
      throw new Error(`111 __S3에 이미지를 업로드하는 중에 오류가 발생했습니다.\n${err.message}`);
   }
-
 
 
  } catch (err) {
