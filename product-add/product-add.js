@@ -65,16 +65,32 @@ async function handleSubmit(e) {
     return alert("빈 칸 및 0이 없어야 합니다.");
   }
 
-  // if (image.size > 3e6) {
-  //   return alert("사진은 최대 2.5MB 크기까지 가능합니다.");
-  // }
+  if (image.size > 3e6) {
+    return alert("사진은 최대 2.5MB 크기까지 가능합니다.");
+  }
 
   // S3 에 이미지가 속할 폴더 이름은 카테고리명으로 함.
   const index = categorySelectBox.selectedIndex;
   const categoryName = categorySelectBox[index].text;
 
+  console.log("index is ", index);
+  console.log("category Name is ",categoryName);
+    console.log("imageInput is ",imageInput);
+
   try {
-     const images = await addImageToS3(imageInput, categoryName);
+
+  // Ensure that the input element is not null
+      const file = imageInput.files[0];
+     if (file) {
+
+        console.log(file);
+        console.log(file.name);
+          const images = await addImageToS3(file, categoryName);
+        console.log("images ", images);
+   }
+
+//     const images = await addImageToS3(imageInput, categoryName);
+//     console.log("images ",images);
     const data = {
       name,
       categoryId,
