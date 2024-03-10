@@ -113,42 +113,35 @@ async function patch(endpoint, params = "", data) {
 // 아래 함수명에 관해, delete 단어는 자바스크립트의 reserved 단어이기에,
 // 여기서는 우선 delete 대신 del로 쓰고 아래 export 시에 delete로 alias 함.
 async function del(endpoint, params = "") {
-
-   const apiUrl = params ? `${baseUrl}${endpoint}/${params}` : `${baseUrl}${endpoint}`;
-    console.trace('Current Call Stack: get ');
-   console.log(`%cDEL 요청: ${apiUrl} `, "color: #a25cd1;");
-
+  const apiUrl = params ? `${baseUrl}${endpoint}/${params}` : `${baseUrl}${endpoint}`;
+  console.trace('현재 호출 스택: get ');
+  console.log(`%cDEL 요청: ${apiUrl} `, "color: #a25cd1;");
 
   console.log(`DELETE 요청 ${apiUrl}`, "color: #059c4b;");
-  console.log(`DELETE 요청 데이터: ${bodyData}`, "color: #059c4b;");
-
 
   // 토큰이 있으면 Authorization 헤더를 포함, 없으면 포함하지 않음
   const token = sessionStorage.getItem("token");
   const headers = {
     "Content-Type": "application/json",
     ...(token && { Authorization: `Bearer ${token}` }),
-    };
+  };
 
-    console.log(token);
-    console.log(headers);
+  console.log(token);
+  console.log(headers);
 
   const res = await fetch(apiUrl, {
     method: "DELETE",
-    headers
+    headers,
   });
-
 
   // 응답 코드가 4XX 계열일 때 (400, 403 등)
   if (!res.ok) {
     const errorContent = await res.json();
     const { reason } = errorContent;
-
     throw new Error(reason);
   }
 
   const result = await res.json();
-
   return result;
 }
 
