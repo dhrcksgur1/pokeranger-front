@@ -113,9 +113,6 @@ async function patch(endpoint, params = "", data) {
 // 아래 함수명에 관해, delete 단어는 자바스크립트의 reserved 단어이기에,
 // 여기서는 우선 delete 대신 del로 쓰고 아래 export 시에 delete로 alias 함.
 async function del(endpoint, params = "") {
-  const apiUrl = params ? `${baseUrl}${endpoint}/${params}` : `${baseUrl}${endpoint}`;
-  console.trace('현재 호출 스택: del ');
-  console.log(`%cDEL 요청: ${apiUrl} `, "color: #a25cd1;");
 
   console.log(`DELETE 요청 ${apiUrl}`, "color: #059c4b;");
 
@@ -126,12 +123,14 @@ async function del(endpoint, params = "") {
     ...(token && { Authorization: `Bearer ${token}` }),
   };
 
-  console.log(token);
-  console.log(headers);
+  console.log(`DELETE 요청 ${apiUrl}`, "color: #059c4b;");
 
   const res = await fetch(apiUrl, {
     method: "DELETE",
-    headers,
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+    },
   });
 
   // 응답 코드가 4XX 계열일 때 (400, 403 등)
@@ -141,8 +140,6 @@ async function del(endpoint, params = "") {
     throw new Error(reason);
   }
 
-  // const result = await res.json();
-  // return result;
 }
 
 // 아래처럼 export하면, import * as Api 로 할 시 Api.get, Api.post 등으로 쓸 수 있음.

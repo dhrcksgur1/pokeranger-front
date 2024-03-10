@@ -49,9 +49,9 @@ async function handleSubmit(e) {
     // TODO 포케매니저 호스팅주소로 바꿔주기
       const result = await Api.post("/users/login", data);
       console.log(result);
-      const { token, isAdmin, userId } = result;
+      const { token, type, userId } = result;
       console.log(token);
-      console.log(isAdmin);
+      console.log(type);
 
 
 
@@ -63,7 +63,7 @@ async function handleSubmit(e) {
     // 로그인 성공
 
     // admin(관리자) 일 경우, sessionStorage에 기록함
-    if (isAdmin) {
+    if (type === 'Admin') {
       sessionStorage.setItem("admin", "admin");
     }
 
