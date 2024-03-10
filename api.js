@@ -115,7 +115,7 @@ async function del(endpoint, params = "") {
 
    const apiUrl = params ? `${baseUrl}${endpoint}/${params}` : `${baseUrl}${endpoint}`;
     console.trace('Current Call Stack: get ');
-   console.log(`%cGET 요청: ${apiUrl} `, "color: #a25cd1;");
+   console.log(`%cDEL 요청: ${apiUrl} `, "color: #a25cd1;");
 
 
   console.log(`DELETE 요청 ${apiUrl}`, "color: #059c4b;");
