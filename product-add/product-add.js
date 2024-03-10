@@ -74,7 +74,7 @@ async function handleSubmit(e) {
   const categoryName = categorySelectBox[index].text;
 
   try {
-     const images = await addImageToS3(imageInput, categoryName);
+     // const images = await addImageToS3(imageInput, categoryName);
     const data = {
       name,
       categoryId,
@@ -91,6 +91,9 @@ async function handleSubmit(e) {
     await Api.post("/products", data);
 
     alert(`정상적으로 ${name} 제품이 등록되었습니다.`);
+    window.location.href = `/products/category/${categoryId}`;
+    // window.location.href = `/account`;
+    // window.location.replace('/product/list/categoryId=${categoryId}');
 
     // 폼 초기화
     registerProductForm.reset();
@@ -99,6 +102,8 @@ async function handleSubmit(e) {
     categorySelectBox.style.color = "black";
     categorySelectBox.style.backgroundColor = "white";
     // searchKeywords = [];
+
+
   } catch (err) {
     console.log(err.stack);
 

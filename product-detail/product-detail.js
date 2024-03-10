@@ -16,6 +16,10 @@ const detailDescriptionTag = document.querySelector("#detailDescriptionTag");
 const addToCartButton = document.querySelector("#addToCartButton");
 const purchaseButton = document.querySelector("#purchaseButton");
 
+//수정삭제 추가
+const editProductButton = document.querySelector("#editProductButton");
+const deleteProductButton = document.querySelector("#deleteProductButton");
+
 // checkUrlParams("id");
 addAllElements();
 addAllEvents();
@@ -91,6 +95,41 @@ console.log(newId);
       window.location.href = "/order";
     }
   });
+
+  editProductButton.addEventListener("click", async () => {
+    const updatedProduct = {
+      name: "새로운 제품명",
+      description: "새로운 제품 설명",
+      price: 10000, // 예시 가격
+      // 필요한 다른 필드 추가
+    };
+
+    try {
+      await Api.patch(`/products/${newId}`, "", updatedProduct);
+      alert("제품이 수정되었습니다.");
+      // 수정 성공 후 필요한 작업 수행, 예: 페이지 새로고침
+      location.reload();
+    } catch (error) {
+      console.error(error);
+      alert("제품 수정에 실패했습니다.");
+    }
+  });
+
+// 삭제 버튼 이벤트 리스너
+  deleteProductButton.addEventListener("click", async () => {
+    try {
+      await Api.delete(`/products/${id}`);
+      alert("제품이 삭제되었습니다.");
+      // 삭제 성공 후 필요한 작업 수행, 예: 제품 목록 페이지로 이동
+      // window.location.href = "/products/list";
+      window.location.href = `/products/category/${categoryId}`;
+
+    } catch (error) {
+      alert("제품 삭제에 실패했습니다.");
+    }
+  });
+
+
 }
 
 async function insertDb(product) {
