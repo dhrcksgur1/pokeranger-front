@@ -114,7 +114,7 @@ async function patch(endpoint, params = "", data) {
 // 여기서는 우선 delete 대신 del로 쓰고 아래 export 시에 delete로 alias 함.
 async function del(endpoint, params = "") {
   const apiUrl = params ? `${baseUrl}${endpoint}/${params}` : `${baseUrl}${endpoint}`;
-  console.trace('현재 호출 스택: get ');
+  console.trace('현재 호출 스택: del ');
   console.log(`%cDEL 요청: ${apiUrl} `, "color: #a25cd1;");
 
   console.log(`DELETE 요청 ${apiUrl}`, "color: #059c4b;");
