@@ -32,19 +32,19 @@ function addAllEvents() {
 }
 
 // 페이지 로드 시 실행, 삭제할 주문 id를 전역변수로 관리함
-let orderIdToDelete;
+let orderId;
 async function insertOrders() {
   const userId = sessionStorage.getItem("userId");
   const orders = await Api.get(`/orders?userId=${userId}&?page=${pageNumber}&size=${pageSize}`);
 
   const ordersData = orders.content;  // 'content' 키에 접근
-  ordersContainer.innerHTML = '';
+  // ordersContainer.innerHTML = '';
 
   for (const order of ordersData) {
     const { id, createdAt, summaryTitle, deliveryState } = order;
     // const date = createdAt.split("T")[0];
     const date = new Date(createdAt).toLocaleDateString('ko-KR');
-    console.log(date);
+    console.log(id);
 
 
     ordersContainer.insertAdjacentHTML(
@@ -65,7 +65,7 @@ async function insertOrders() {
 
     // Modal 창 띄우고, 동시에, 전역변수에 해당 주문의 id 할당
     deleteButton.addEventListener("click", () => {
-      orderIdToDelete = id;
+      orderId = id;
       openModal();
     });
   }
@@ -76,17 +76,18 @@ async function deleteOrderData(e) {
   e.preventDefault();
 
   try {
-    await Api.delete("/orders", orderIdToDelete);
+    await Api.delete(`/orders/${orderId}`);
+    console.log(orderId);
 
     // 삭제 성공
     alert("주문 정보가 삭제되었습니다.");
 
     // 삭제한 아이템 화면에서 지우기
-    const deletedItem = document.querySelector(`#order-${orderIdToDelete}`);
+    const deletedItem = document.querySelector(`#order-${orderId}`);
     deletedItem.remove();
 
     // 전역변수 초기화
-    orderIdToDelete = "";
+    orderId = "";
 
     closeModal();
   } catch (err) {
@@ -96,7 +97,7 @@ async function deleteOrderData(e) {
 
 // Modal 창에서 아니오 클릭할 시, 전역 변수를 다시 초기화함.
 function cancelDelete() {
-  orderIdToDelete = "";
+  orderId = "";
   closeModal();
 }
 
