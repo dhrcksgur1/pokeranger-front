@@ -10,6 +10,8 @@ const modalCloseButton = document.querySelector("#modalCloseButton");
 const deleteCompleteButton = document.querySelector("#deleteCompleteButton");
 const deleteCancelButton = document.querySelector("#deleteCancelButton");
 
+let pageNumber = 0;  // 현재 페이지 번호
+const pageSize = 10;  // 한 페이지에 보여줄 아이템의 수
 checkLogin();
 addAllElements();
 addAllEvents();
@@ -33,10 +35,13 @@ function addAllEvents() {
 let orderIdToDelete;
 async function insertOrders() {
   const userId = sessionStorage.getItem("userId");
-  const orders = await Api.get(`/orders?userId=${userId}`);
+  const orders = await Api.get(`/orders?userId=${userId}&?page=${pageNumber}&size=${pageSize}`);
 
-  for (const order of orders) {
-    const { id, createdAt, summaryTitle, status } = order;
+  const ordersData = orders.content;  // 'content' 키에 접근
+  ordersContainer.innerHTML = '';
+
+  for (const order of ordersData) {
+    const { id, createdAt, summaryTitle, deliveryState } = order;
     // const date = createdAt.split("T")[0];
     const date = new Date(createdAt).toLocaleDateString('ko-KR');
     console.log(date);
@@ -48,7 +53,7 @@ async function insertOrders() {
         <div class="columns orders-item" id="order-${id}">
           <div class="column is-2">${date}</div>
           <div class="column is-6 order-summary">${summaryTitle}</div>
-          <div class="column is-2">${status}</div>
+          <div class="column is-2">${deliveryState}</div>
           <div class="column is-2">
             <button class="button" id="deleteButton-${id}" >주문 취소</button>
           </div>
