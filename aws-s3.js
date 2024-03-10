@@ -22,15 +22,12 @@ const s3 = new AWS.S3({
 // 아마존 S3에 사진파일 올리는 함수
 // fileInputElement: input 요소
 // album: S3에서 업로드된 사진파일이 속할 폴더 이름.
-async function addImageToS3(fileInputElement, album) {
+async function addImageToS3(file, album) {
     // 파일 input 요소에, 사용자가 올린 파일이 있는지 여부 확인
-    const files = fileInputElement.files;
-    if (!files) {
-        throw new Error("사진 파일을 업로드해 주세요.");
-    }
+
 
     // 파일 input 요소에서 사진파일 추출 등 AWS S3로의 업로드 준비
-    const file = files[0];
+
     // 유니크한 사진파일 주소를 만들 수 있게 함.
     const fileName = randomId() + "_" + file.name;
     const albumPhotosKey = encodeURIComponent(album) + "/";
