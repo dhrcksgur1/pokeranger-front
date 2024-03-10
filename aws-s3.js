@@ -34,6 +34,8 @@ async function addImageToS3(file, album) {
 
   var photoKey = albumPhotosKey + fileName;
 
+    console.log(photoKey);
+
   // Use S3 ManagedUpload class as it supports multipart uploads
   var upload = new AWS.S3.ManagedUpload({
     params: {
@@ -41,25 +43,27 @@ async function addImageToS3(file, album) {
       Key: photoKey,
       Body: file,
     },
-  });
-console.log(upload);
-  try {
-    var promise = upload.promise();
-    console.log(promise);
+    });
 
-    promise.then(
-          function (data) {
-              console.log(data);
-               alert("There was an error uploading your photo: ", err.message);
-          },
-          function (err) {
-            return alert("There was an error uploading your photo: ", err.message);
-          }
-        );
-  }catch(err)
-  {
-     throw new Error(`111 __S3에 이미지를 업로드하는 중에 오류가 발생했습니다.\n${err.message}`);
-  }
+    console.log(upload);
+
+      try {
+            var promise = upload.promise();
+            console.log(promise);
+
+            promise.then(
+                  function (data) {
+                      console.log(data);
+                       alert("There was an error uploading your photo: ", err.message);
+                  },
+                  function (err) {
+                    return alert("There was an error uploading your photo: ", err.message);
+                  }
+                );
+      }catch(err)
+      {
+         throw new Error(`111 __S3에 이미지를 업로드하는 중에 오류가 발생했습니다.\n${err.message}`);
+      }
 
 
  } catch (err) {
