@@ -82,15 +82,11 @@ async function handleSubmit(e) {
   // Ensure that the input element is not null
       const file = imageInput.files[0];
      if (file) {
-
         console.log(file);
         console.log(file.name);
         images = await addImageToS3(file, categoryName);
         console.log("images ", images);
    }
-
-    images = await addImageToS3(imageInput, categoryName);
-    console.log("images ",images);
     const data = {
       name,
       categoryId,
