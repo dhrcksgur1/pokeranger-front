@@ -74,7 +74,7 @@ async function handleSubmit(e) {
   const categoryName = categorySelectBox[index].text;
 
   try {
-    // const images = await addImageToS3(imageInput, categoryName);
+     const images = await addImageToS3(imageInput, categoryName);
     const data = {
       name,
       categoryId,
