@@ -141,8 +141,8 @@ async function del(endpoint, params = "") {
     throw new Error(reason);
   }
 
-  const result = await res.json();
-  return result;
+  // const result = await res.json();
+  // return result;
 }
 
 // 아래처럼 export하면, import * as Api 로 할 시 Api.get, Api.post 등으로 쓸 수 있음.

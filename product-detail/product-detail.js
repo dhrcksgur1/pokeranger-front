@@ -125,10 +125,11 @@ console.log(newId);
       window.location.href = `/products/category/${categoryId}`;
 
     } catch (error) {
-      console.error(error);
       alert("제품 삭제에 실패했습니다.");
     }
   });
+
+
 }
 
 async function insertDb(product) {
