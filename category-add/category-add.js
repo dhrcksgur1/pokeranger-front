@@ -57,8 +57,6 @@ async function handleSubmit(e) {
     const data = { title, description, themeClass, imageKey };
 
 
-    // 임시로 로컬호스트8080 으로 get 요청 
-    const  = 'http://localhost:8080';
     
    // 토큰이 있으면 Authorization 헤더를 포함, 없으면 포함하지 않음
    const token = sessionStorage.getItem("token");
