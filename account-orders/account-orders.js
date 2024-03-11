@@ -65,8 +65,13 @@ async function insertOrders() {
 
     // Modal 창 띄우고, 동시에, 전역변수에 해당 주문의 id 할당
     deleteButton.addEventListener("click", () => {
-      orderId = id;
-      openModal();
+      if (deliveryState === "상품 준비중") {
+        orderId = id;
+        openModal();
+      } else {
+        // 다른 상태의 주문은 삭제할 수 없다는 경고 메시지를 표시합니다.
+        alert("배송 준비 중인 주문만 삭제할 수 있습니다.");
+      }
     });
   }
 }
