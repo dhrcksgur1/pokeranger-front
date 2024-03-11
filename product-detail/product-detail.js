@@ -33,10 +33,21 @@ function addAllElements() {
 // addEventListener들을 묶어주어서 코드를 깔끔하게 하는 역할임.
 function addAllEvents() {}
 
+
+//삭제후에 페이지 리로드
+window.addEventListener('pageshow', (event) => {
+  // Check if there's a flag indicating we should reload the page
+  if (sessionStorage.getItem('shouldReload') === 'true') {
+    sessionStorage.removeItem('shouldReload'); // Clear the flag to avoid reloading again on the next visit
+    window.location.reload(); // Reload the page
+  }
+});
+
 async function insertProductData() {
   const path = window.location.pathname;
   console.log(path);
   const id = path.split('/').pop();
+  //id값 인트형으로 형변환
   const newId = parseInt(id);
   const product = await Api.get(`/products/${newId}`);
 
@@ -45,20 +56,20 @@ console.log(newId);
   const {
     name,
     description,
-    // menufacturer,
+     userName,
     images,
     // isRecommended,
     price,
   } = product;
   const imageUrl = await getImageUrl(images);
 
-  console.log(name,description,images);
+  console.log(name,description,images,userName);
 
   productImageTag.src = imageUrl;
   titleTag.innerText = name;
   detailDescriptionTag.innerText = description;
   priceTag.innerText = `${addCommas(price)}원`;
-  // manufacturerTag.innerText = menufacturer;
+  manufacturerTag.innerText = userName;
 
   // if (isRecommended) {
   //   titleTag.insertAdjacentHTML(
@@ -96,24 +107,6 @@ console.log(newId);
     }
   });
 
-  editProductButton.addEventListener("click", async () => {
-    const updatedProduct = {
-      name: "새로운 제품명",
-      description: "새로운 제품 설명",
-      price: 10000, // 예시 가격
-      // 필요한 다른 필드 추가
-    };
-
-    try {
-      await Api.patch(`/products/${newId}`, "", updatedProduct);
-      alert("제품이 수정되었습니다.");
-      // 수정 성공 후 필요한 작업 수행, 예: 페이지 새로고침
-      location.reload();
-    } catch (error) {
-      console.error(error);
-      alert("제품 수정에 실패했습니다.");
-    }
-  });
 
 // 삭제 버튼 이벤트 리스너
   deleteProductButton.addEventListener("click", async () => {
@@ -121,14 +114,15 @@ console.log(newId);
       await Api.delete(`/products/${id}`);
       alert("제품이 삭제되었습니다.");
       // 삭제 성공 후 필요한 작업 수행, 예: 제품 목록 페이지로 이동
-      // window.location.href = "/products/list";
-      window.location.href = `/products/category/${categoryId}`;
+
+      // window.location.href = `/products/category/${categoryId}`;
+      sessionStorage.setItem('shouldReload', 'true');
+      window.history.back();
 
     } catch (error) {
       alert("제품 삭제에 실패했습니다.");
     }
   });
-
 
 }
 
