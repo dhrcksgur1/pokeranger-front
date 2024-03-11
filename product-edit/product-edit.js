@@ -162,6 +162,8 @@ init(); // 페이지 로드 시 초기화 함수 실행
 import { addImageToS3 } from "../../aws-s3.js";
 import * as Api from "../../api.js";
 import { checkLogin, createNavbar } from "../../useful-functions.js";
+import {addCommas} from "../useful-functions";
+import {getImageUrl} from "../aws-s3";
 
 // Select DOM elements
 const nameInput = document.querySelector("#nameInput");
@@ -177,7 +179,8 @@ const id = "theProductId"; // Replace this with the actual product ID retrieval 
 checkLogin();
 addAllElements();
 addAllEvents();
-fetchAndDisplayProductDetails(id); // Make sure this is called with the correct product ID
+//fetchAndDisplayProductDetails(id); // Make sure this is called with the correct product ID
+insertProductData(id)
 
 function addAllElements() {
     createNavbar();
@@ -190,7 +193,52 @@ function addAllEvents() {
     categorySelectBox.addEventListener("change", handleCategoryChange);
 }
 
-async function fetchAndDisplayProductDetails(id) {
+// async function fetchAndDisplayProductDetails(id) {
+//     try {
+//         const productDetails = await Api.get(`/products/${id}`);
+//         console.log(productDetails);
+//         nameInput.value = productDetails.name;
+//         categorySelectBox.value = productDetails.categoryId;
+//         descriptionInput.value = productDetails.description;
+//         stockInput.value = productDetails.stock;
+//         priceInput.value = productDetails.price;
+//         // Add logic to display the existing product image if applicable
+//     } catch (error) {
+//         console.error("Fetching product details failed: ", error);
+//         alert("Failed to load product details.");
+//     }
+// }
+
+
+
+async function insertProductData(id) {
+    const path = window.location.pathname;
+    console.log(path);
+    const id = path.split('/').pop();
+    //id값 인트형으로 형변환
+    const newId = parseInt(id);
+    const product = await Api.get(`/products/${newId}`);
+
+    console.log(newId);
+    // 객체 destructuring
+    const {
+        name,
+        description,
+        userName,
+        images,
+        // isRecommended,
+        price,
+    } = product;
+    const imageUrl = await getImageUrl(images);
+
+    console.log(name, description, images, userName);
+
+    productImageTag.src = imageUrl;
+    titleTag.innerText = name;
+    detailDescriptionTag.innerText = description;
+    priceTag.innerText = `${addCommas(price)}원`;
+    manufacturerTag.innerText = userName;
+
     try {
         const productDetails = await Api.get(`/products/${id}`);
         console.log(productDetails);
@@ -206,6 +254,8 @@ async function fetchAndDisplayProductDetails(id) {
     }
 }
 
+
+//수정 입력
 async function handleSubmit(e) {
     console.log("handleSubmit called");
     e.preventDefault();

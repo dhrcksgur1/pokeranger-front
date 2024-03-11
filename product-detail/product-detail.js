@@ -4,6 +4,7 @@ import {
   getUrlParams,
   addCommas,
   checkUrlParams,
+    navigate,
   createNavbar,
 } from "../../useful-functions.js";
 import { addToDb, putToDb } from "../../indexed-db.js";
@@ -106,6 +107,47 @@ console.log(newId);
       window.location.href = "/order";
     }
   });
+
+//수정 버튼
+//   editProductButton.addEventListener("click", async () => {
+//
+//
+//     const editItem = document.querySelector(`#a${newId}`);
+//     editItem.addEventListener(
+//         "click",
+//         window.location.href = "/product/edit/{newId}";
+//
+//     );
+//
+//     try {
+//       alert("제품이 수정되었습니다.");
+//       // 삭제 성공 후 필요한 작업 수행, 예: 제품 목록 페이지로 이동
+//       // window.location.href = `/products/${newId}`;
+//     } catch (error) {
+//       alert("제품 수정에 실패했습니다.");
+//     }
+//   });
+
+  editProductButton.addEventListener("click", async () => {
+    const editItem = document.querySelector(`#a${newId}`);
+    if (editItem) { // editItem이 존재하는지 확인
+      editItem.addEventListener("click", (event) => {
+        event.preventDefault(); // 기본 이벤트를 방지
+      });
+    } else {
+      console.error('Edit item not found');
+    }
+
+    try {
+      window.location.href = `/products/edit/${id}`;
+      alert("제품이 수정되었습니다.");
+      // 성공 후 필요한 작업 수행, 예: 제품 목록 페이지로 이동
+      // window.location.href = `/products/${newId}`;
+    } catch (error) {
+      alert("제품 수정에 실패했습니다.");
+    }
+  });
+
 
 // 삭제 버튼 이벤트 리스너
   deleteProductButton.addEventListener("click", async () => {
