@@ -16,6 +16,9 @@ const modalCloseButton = document.querySelector("#modalCloseButton");
 const deleteCompleteButton = document.querySelector("#deleteCompleteButton");
 const deleteCancelButton = document.querySelector("#deleteCancelButton");
 
+let pageNumber = 0;  // 현재 페이지 번호
+const pageSize = 10;  // 한 페이지에 보여줄 아이템의 수
+
 checkAdmin();
 addAllElements();
 addAllEvents();
@@ -38,7 +41,10 @@ function addAllEvents() {
 // 페이지 로드 시 실행, 삭제할 주문 id를 전역변수로 관리함
 let orderIdToDelete;
 async function insertOrders() {
-  const orders = await Api.get("/orders/admin");
+  const userId = sessionStorage.getItem("userId");
+  const orders = await Api.get(`/orders?userId=${userId}&?page=${pageNumber}&size=${pageSize}`);
+
+  const ordersData = orders.content;
 
   const summary = {
     ordersCount: 0,
@@ -47,19 +53,24 @@ async function insertOrders() {
     completeCount: 0,
   };
 
-  for (const order of orders) {
-    const { id, totalPrice, createdAt, summaryTitle, status } = order;
+  for (const order of ordersData) {
+    const { id, totalCost, createdAt, summaryTitle, deliveryState } = order;
     console.log(summaryTitle)
-    console.log(status)
-    const date = createdAt;
+    console.log(deliveryState)
+    const date = new Date(createdAt);
+    const formattedDate = new Intl.DateTimeFormat('ko-KR', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    }).format(date);
 
     summary.ordersCount += 1;
 
-    if (status === "상품 준비중") {
+    if (deliveryState === "상품 준비중") {
       summary.prepareCount += 1;
-    } else if (status === "상품 배송중") {
+    } else if (deliveryState === "상품 배송중") {
       summary.deliveryCount += 1;
-    } else if (status === "배송완료") {
+    } else if (deliveryState === "배송완료") {
       summary.completeCount += 1;
     }
 
@@ -67,27 +78,27 @@ async function insertOrders() {
       "beforeend",
       `
         <div class="columns orders-item" id="order-${id}">
-          <div class="column is-2">${date}</div>
+          <div class="column is-2">${formattedDate}</div>
           <div class="column is-4 order-summary">${summaryTitle}</div>
-          <div class="column is-2">${addCommas(totalPrice)}</div>
+          <div class="column is-2">${addCommas(totalCost)}</div>
           <div class="column is-2">
             <div class="select" >
               <select id="statusSelectBox-${id}">
                 <option 
                   class="has-background-danger-light has-text-danger"
-                  ${status === "상품 준비중" ? "selected" : ""} 
+                  ${deliveryState === "상품 준비중" ? "selected" : ""} 
                   value="상품 준비중">
                   상품 준비중
                 </option>
                 <option 
                   class="has-background-primary-light has-text-primary"
-                  ${status === "상품 배송중" ? "selected" : ""} 
+                  ${deliveryState === "상품 배송중" ? "selected" : ""} 
                   value="상품 배송중">
                   상품 배송중
                 </option>
                 <option 
                   class="has-background-grey-light"
-                  ${status === "배송완료" ? "selected" : ""} 
+                  ${deliveryState === "배송완료" ? "selected" : ""} 
                   value="배송완료">
                   배송완료
                 </option>
@@ -124,8 +135,14 @@ async function insertOrders() {
 
     // 이벤트 - 삭제버튼 클릭 시 Modal 창 띄우고, 동시에, 전역변수에 해당 주문의 id 할당
     deleteButton.addEventListener("click", () => {
-      orderIdToDelete = id;
-      openModal();
+      // 배송 상태가 '배송 준비 중'인 경우에만 삭제 모달 창을 열어줍니다.
+      if (deliveryState === "상품 준비중") {
+        orderIdToDelete = id;
+        openModal();
+      } else {
+        // 다른 상태의 주문은 삭제할 수 없다는 경고 메시지를 표시합니다.
+        alert("배송 준비 중인 주문만 삭제할 수 있습니다.");
+      }
     });
   }
 
