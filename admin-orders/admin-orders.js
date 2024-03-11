@@ -27,6 +27,8 @@ addAllEvents();
 function addAllElements() {
   createNavbar();
   insertOrders();
+  createPagination();
+  fetchAllUsers();
 }
 
 // 여러 개의 addEventListener들을 묶어주어서 코드를 깔끔하게 하는 역할임.
@@ -42,16 +44,12 @@ function addAllEvents() {
 let orderIdToDelete;
 async function insertOrders() {
   const userId = sessionStorage.getItem("userId");
-  const orders = await Api.get(`/orders?userId=${userId}&?page=${pageNumber}&size=${pageSize}`);
+  const orders = await Api.get(`/orders?userId=${userId}&page=${pageNumber}&size=${pageSize}`);
 
   const ordersData = orders.content;
+  ordersContainer.innerHTML = '';
 
-  const summary = {
-    ordersCount: 0,
-    prepareCount: 0,
-    deliveryCount: 0,
-    completeCount: 0,
-  };
+
 
   for (const order of ordersData) {
     const { id, totalCost, createdAt, summaryTitle, deliveryState } = order;
@@ -64,15 +62,6 @@ async function insertOrders() {
       day: '2-digit'
     }).format(date);
 
-    summary.ordersCount += 1;
-
-    if (deliveryState === "상품 준비중") {
-      summary.prepareCount += 1;
-    } else if (deliveryState === "상품 배송중") {
-      summary.deliveryCount += 1;
-    } else if (deliveryState === "배송완료") {
-      summary.completeCount += 1;
-    }
 
     ordersContainer.insertAdjacentHTML(
       "beforeend",
@@ -146,11 +135,7 @@ async function insertOrders() {
     });
   }
 
-  // 총 요약 값 삽입
-  ordersCount.innerText = addCommas(summary.ordersCount);
-  prepareCount.innerText = addCommas(summary.prepareCount);
-  deliveryCount.innerText = addCommas(summary.deliveryCount);
-  completeCount.innerText = addCommas(summary.completeCount);
+
 }
 
 // db에서 주문정보 삭제
@@ -198,4 +183,71 @@ function keyDownCloseModal(e) {
   if (e.keyCode === 27) {
     closeModal();
   }
+}
+
+async function createPagination() {
+
+  const userId = sessionStorage.getItem("userId");
+  const totalOrders = await Api.get(`/orders?userId=${userId}`);
+
+  const totalPages = totalOrders.totalPages; // 'totalPages' 키에 접근
+
+  const paginationContainer = document.getElementById('pagination');
+  paginationContainer.innerHTML = ''; // 기존의 페이지네이션 버튼을 초기화합니다.
+
+  for(let i = 0; i < totalPages; i++) {
+    const button = document.createElement('button');
+    button.innerText = i + 1;
+    button.addEventListener('click', function() {
+      pageNumber = i;
+      insertOrders();
+    });
+    paginationContainer.appendChild(button);
+  }
+}
+
+async function fetchAllUsers() {
+  let isLastPage = false;
+  let number = 0;
+  const size = 100; // 원하는 페이지 크기 설정
+  let allOrders = [];
+  const userId = sessionStorage.getItem("userId");
+
+  const summary = {
+    ordersCount: 0,
+    prepareCount: 0,
+    deliveryCount: 0,
+    completeCount: 0,
+  };
+
+  while (!isLastPage) {
+    const response = await Api.get(`/orders?userId=${userId}&page=${number}&size=${size}`);
+    // API 응답 구조에 따라 데이터와 '마지막 페이지 여부'를 확인
+    // 예시에서는 response.data가 사용자 배열이고, response.lastPage로 마지막 페이지 여부를 판단한다고 가정
+    allOrders = allOrders.concat(response.content);
+    isLastPage = response.last; // 실제 API 응답에 따라 조정 필요
+
+    number++; // 다음 페이지로
+  }
+
+  for (const order of allOrders) {
+    const { deliveryState } = order;
+
+
+    summary.ordersCount += 1;
+
+    if (deliveryState === "상품 준비중") {
+      summary.prepareCount += 1;
+    } else if (deliveryState === "상품 배송중") {
+      summary.deliveryCount += 1;
+    } else if (deliveryState === "배송완료") {
+      summary.completeCount += 1;
+    }
+  }
+  // 총 요약 값 삽입
+  ordersCount.innerText = addCommas(summary.ordersCount);
+  prepareCount.innerText = addCommas(summary.prepareCount);
+  deliveryCount.innerText = addCommas(summary.deliveryCount);
+  completeCount.innerText = addCommas(summary.completeCount);
+
 }

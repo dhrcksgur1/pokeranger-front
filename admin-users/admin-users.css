@@ -46,3 +46,8 @@
 .modal .buttons {
   justify-content: center;
 }
+
+/* 외부 css 재정의 */
+*,::after,::before {
+  box-sizing: revert;
+}
