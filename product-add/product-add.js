@@ -49,7 +49,7 @@ async function handleSubmit(e) {
   const image = imageInput.files[0];
   const stock = parseInt(stockInput.value);
   const price = parseInt(priceInput.value);
-  // let images = ''; // 기본 값으로 빈 문자열 설정
+  let images = ''; // 기본 값으로 빈 문자열 설정
 
 
   // 입력 칸이 비어 있으면 진행 불가
@@ -82,15 +82,11 @@ async function handleSubmit(e) {
   // Ensure that the input element is not null
       const file = imageInput.files[0];
      if (file) {
-
         console.log(file);
         console.log(file.name);
-          const images = await addImageToS3(file, categoryName);
+        images = await addImageToS3(file, categoryName);
         console.log("images ", images);
    }
-
-//     const images = await addImageToS3(imageInput, categoryName);
-//     console.log("images ",images);
     const data = {
       name,
       categoryId,
