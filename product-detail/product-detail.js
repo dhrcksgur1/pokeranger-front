@@ -137,9 +137,8 @@ console.log(newId);
     } else {
       console.error('Edit item not found');
     }
-
     try {
-      window.location.href = `/products/edit/${id}`;
+      window.location.href = `/product/edit/${id}`;
       alert("제품이 수정되었습니다.");
       // 성공 후 필요한 작업 수행, 예: 제품 목록 페이지로 이동
       // window.location.href = `/products/${newId}`;

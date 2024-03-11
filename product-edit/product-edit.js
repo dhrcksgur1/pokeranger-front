@@ -174,13 +174,14 @@ const stockInput = document.querySelector("#stockInput");
 const priceInput = document.querySelector("#priceInput");
 const submitButton = document.querySelector("#submitButton");
 const registerProductForm = document.querySelector("#registerProductForm");
-const id = "theProductId"; // Replace this with the actual product ID retrieval logic, e.g., from the URL or storage
+
+
 
 checkLogin();
 addAllElements();
 addAllEvents();
-//fetchAndDisplayProductDetails(id); // Make sure this is called with the correct product ID
-insertProductData(id)
+fetchAndDisplayProductDetails(id); // Make sure this is called with the correct product ID
+// editProductData();
 
 function addAllElements() {
     createNavbar();
@@ -211,7 +212,7 @@ function addAllEvents() {
 
 
 
-async function insertProductData(id) {
+async function editProductData() {
     const path = window.location.pathname;
     console.log(path);
     const id = path.split('/').pop();
@@ -226,7 +227,6 @@ async function insertProductData(id) {
         description,
         userName,
         images,
-        // isRecommended,
         price,
     } = product;
     const imageUrl = await getImageUrl(images);
@@ -240,14 +240,12 @@ async function insertProductData(id) {
     manufacturerTag.innerText = userName;
 
     try {
-        const productDetails = await Api.get(`/products/${id}`);
-        console.log(productDetails);
-        nameInput.value = productDetails.name;
-        categorySelectBox.value = productDetails.categoryId;
-        descriptionInput.value = productDetails.description;
-        stockInput.value = productDetails.stock;
-        priceInput.value = productDetails.price;
-        // Add logic to display the existing product image if applicable
+        console.log(product);
+        nameInput.value = product.name;
+        categorySelectBox.value = product.categoryId;
+        descriptionInput.value = product.description;
+        stockInput.value = product.stock;
+        priceInput.value = product.price;
     } catch (error) {
         console.error("Fetching product details failed: ", error);
         alert("Failed to load product details.");
