@@ -95,7 +95,7 @@ async function handleSubmit(e) {
       price,
     };
     console.log(data);
-
+    console.trace('Current Call Stack: get ');
     await Api.post("/products", data);
 
     alert(`정상적으로 ${name} 제품이 등록되었습니다.`);

@@ -107,14 +107,12 @@ console.log(newId);
     }
   });
 
-
 // 삭제 버튼 이벤트 리스너
   deleteProductButton.addEventListener("click", async () => {
     try {
       await Api.delete(`/products/${id}`);
       alert("제품이 삭제되었습니다.");
       // 삭제 성공 후 필요한 작업 수행, 예: 제품 목록 페이지로 이동
-
       // window.location.href = `/products/category/${categoryId}`;
       sessionStorage.setItem('shouldReload', 'true');
       window.history.back();

@@ -35,6 +35,7 @@ async function get(endpoint, params = "") {
 catch{}
 }
 
+
 async function post(endpoint, data) {
 
      const apiUrl = `${baseUrl}${endpoint}`;
