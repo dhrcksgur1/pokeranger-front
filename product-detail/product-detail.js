@@ -142,14 +142,7 @@ editProductButton.addEventListener("click", async () => {
     } else {
       console.error('Edit item not found');
     }
-    try {
       window.location.href = `/product/edit/${id}`;
-      alert("제품이 수정되었습니다.");
-      // 성공 후 필요한 작업 수행, 예: 제품 목록 페이지로 이동
-      // window.location.href = `/products/${newId}`;
-    } catch (error) {
-      alert("제품 수정에 실패했습니다.");
-    }
   });
 
 

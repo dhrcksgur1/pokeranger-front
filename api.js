@@ -85,10 +85,12 @@ async function patch(endpoint, params = "", data) {
    console.log(`%cPATCH 요청: ${apiUrl} `, "color: #a25cd1;");
 
 
-
+  console.log("Data received:", data);
   const bodyData = JSON.stringify(data);
   console.log(`%cPATCH 요청: ${apiUrl}`, "color: #059c4b;");
   console.log(`%cPATCH 요청 데이터: ${bodyData}`, "color: #059c4b;");
+  console.log("Body data:", bodyData);
+
 
   const res = await fetch(apiUrl, {
     method: "PATCH",
@@ -151,6 +153,9 @@ async function patchWithPathValue(endpoint, pathValue, data) {
 
   return result;
 }
+
+
+
 
 
 
