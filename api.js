@@ -35,6 +35,7 @@ async function get(endpoint, params = "") {
 catch{}
 }
 
+
 async function post(endpoint, data) {
 
      const apiUrl = `${baseUrl}${endpoint}`;
@@ -59,6 +60,7 @@ async function post(endpoint, data) {
     headers,
     body: bodyData,
   });
+ console.log(res);
 
   // 응답 코드가 4XX 계열일 때 (400, 403 등)
   if (!res.ok) {
@@ -77,9 +79,50 @@ async function post(endpoint, data) {
 // api 로 PATCH 요청 (/endpoint/params 로, JSON 데이터 형태로 요청함)
 async function patch(endpoint, params = "", data) {
 
+    console.log(params);
    const apiUrl = params ? `${baseUrl}${endpoint}/${params}` : `${baseUrl}${endpoint}`;
     console.trace('Current Call Stack: get ');
-   console.log(`%cGET 요청: ${apiUrl} `, "color: #a25cd1;");
+   console.log(`%cPATCH 요청: ${apiUrl} `, "color: #a25cd1;");
+
+
+  console.log("Data received:", data);
+  const bodyData = JSON.stringify(data);
+  console.log(`%cPATCH 요청: ${apiUrl}`, "color: #059c4b;");
+  console.log(`%cPATCH 요청 데이터: ${bodyData}`, "color: #059c4b;");
+  console.log("Body data:", bodyData);
+
+
+  const res = await fetch(apiUrl, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+    },
+    body: bodyData,
+  });
+
+  console.log(res);
+
+  // 응답 코드가 4XX 계열일 때 (400, 403 등)
+  if (!res.ok) {
+    const errorContent = await res.json();
+    const { reason } = errorContent;
+
+    throw new Error(reason);
+  }
+
+  const result = await res.json();
+
+  return result;
+}
+
+// api 로 PATCH 요청 (/endpoint/params 로, JSON 데이터 형태로 요청함)
+async function patchWithPathValue(endpoint, pathValue, data) {
+
+    console.log(endpoint, pathValue, data);
+   const apiUrl =  pathValue ? `${baseUrl}${endpoint}/${pathValue}` : `${baseUrl}${endpoint}`;
+    console.trace('Current Call Stack: get ');
+   console.log(`%cPATCH 요청: ${apiUrl} `, "color: #a25cd1;");
 
 
 
@@ -96,6 +139,8 @@ async function patch(endpoint, params = "", data) {
     body: bodyData,
   });
 
+  console.log(res);
+
   // 응답 코드가 4XX 계열일 때 (400, 403 등)
   if (!res.ok) {
     const errorContent = await res.json();
@@ -108,6 +153,10 @@ async function patch(endpoint, params = "", data) {
 
   return result;
 }
+
+
+
+
 
 
 // 아래 함수명에 관해, delete 단어는 자바스크립트의 reserved 단어이기에,
@@ -140,6 +189,6 @@ async function patch(endpoint, params = "", data) {
     }
 
 // 아래처럼 export하면, import * as Api 로 할 시 Api.get, Api.post 등으로 쓸 수 있음.
-export { get, post, patch, del as delete };
+export { get, post, patch, del as delete, patchWithPathValue  };
 
 console.log("hello world");
