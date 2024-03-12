@@ -268,7 +268,7 @@ async function saveUserData(e) {
 
   try {
 
-  const userType = sessionStorage.setItem("admin", "admin");
+  const userType = sessionStorage.getItem("admin");
   let inputUserType = "User";
   if( userType )
   {

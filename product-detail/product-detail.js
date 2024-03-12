@@ -21,6 +21,8 @@ const purchaseButton = document.querySelector("#purchaseButton");
 const editProductButton = document.querySelector("#editProductButton");
 const deleteProductButton = document.querySelector("#deleteProductButton");
 
+let getProductRegisterUserId;
+
 // checkUrlParams("id");
 addAllElements();
 addAllEvents();
@@ -55,6 +57,7 @@ async function insertProductData() {
 console.log(newId);
   // 객체 destructuring
   const {
+    userId,
     name,
     description,
      userName,
@@ -64,7 +67,9 @@ console.log(newId);
   } = product;
   const imageUrl = await getImageUrl(images);
 
-  console.log(name,description,images,userName);
+  console.log(userId,name,description,images,userName);
+
+  getProductRegisterUserId=userId;
 
   productImageTag.src = imageUrl;
   titleTag.innerText = name;
@@ -129,6 +134,13 @@ console.log(newId);
 //   });
 
   editProductButton.addEventListener("click", async () => {
+    const getUserId = sessionStorage.getItem('userId');
+    if(getUserId !== getProductRegisterUserId){
+      console.log(getProductRegisterUserId);
+      console.log(getUserId);
+
+      return alert("작성자가 아닙니다");
+    }
     const editItem = document.querySelector(`#a${newId}`);
     if (editItem) { // editItem이 존재하는지 확인
       editItem.addEventListener("click", (event) => {
@@ -143,6 +155,9 @@ console.log(newId);
 
 // 삭제 버튼 이벤트 리스너
   deleteProductButton.addEventListener("click", async () => {
+    if(getProductRegisterUserId !== sessionStorage.getItem('userId')){
+      return alert("작성자가 아닙니다");
+    }
     try {
       await Api.delete(`/products/${id}`);
       alert("제품이 삭제되었습니다.");
