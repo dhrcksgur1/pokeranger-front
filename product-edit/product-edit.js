@@ -150,12 +150,12 @@ async function addOptionsToSelectBox() {
     console.log(categories);
     categories.forEach((category) => {
         // 객체 destructuring
-        const { id, name, themeClass } = category;
+        const { id, title, themeClass } = category;
 
         categorySelectBox.insertAdjacentHTML(
             "beforeend",
             `
-      <option value=${id} class="notification ${themeClass}"> ${name} </option>`
+      <option value=${id} class="notification ${themeClass}"> ${title} </option>`
         );
     });
 }
