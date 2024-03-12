@@ -79,6 +79,11 @@ console.log(newId);
   //   );
   // }
 
+editProductButton.addEventListener("click", async () => {
+    navigate(/home);
+
+});
+
   addToCartButton.addEventListener("click", async () => {
     try {
       await insertDb(product);

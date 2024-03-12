@@ -60,6 +60,7 @@ async function post(endpoint, data) {
     headers,
     body: bodyData,
   });
+ console.log(res);
 
   // 응답 코드가 4XX 계열일 때 (400, 403 등)
   if (!res.ok) {
@@ -96,6 +97,8 @@ async function patch(endpoint, params = "", data) {
     },
     body: bodyData,
   });
+
+  console.log(res);
 
   // 응답 코드가 4XX 계열일 때 (400, 403 등)
   if (!res.ok) {
