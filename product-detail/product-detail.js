@@ -156,6 +156,8 @@ console.log(newId);
 
 // 삭제 버튼 이벤트 리스너
   deleteProductButton.addEventListener("click", async () => {
+    const getUserId = sessionStorage.getItem('userId');
+    const parseIntGetUerId =parseInt(getUserId);
     if(parseIntGetUerId != getProductRegisterUserId){
       console.log(getProductRegisterUserId);
       console.log(parseIntGetUerId);
