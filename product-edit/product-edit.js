@@ -162,8 +162,8 @@ init(); // 페이지 로드 시 초기화 함수 실행
 import { addImageToS3 } from "../../aws-s3.js";
 import * as Api from "../../api.js";
 import { checkLogin, createNavbar } from "../../useful-functions.js";
-import {addCommas} from "../useful-functions";
-import {getImageUrl} from "../aws-s3";
+import {addCommas} from "../useful-functions.js";
+import {getImageUrl} from "../aws-s3.js";
 
 // Select DOM elements
 const nameInput = document.querySelector("#nameInput");
@@ -175,12 +175,17 @@ const priceInput = document.querySelector("#priceInput");
 const submitButton = document.querySelector("#submitButton");
 const registerProductForm = document.querySelector("#registerProductForm");
 
-
+const productImageTag = document.querySelector("#productImageTag");
+const manufacturerTag = document.querySelector("#manufacturerTag");
+const titleTag = document.querySelector("#titleTag");
+const detailDescriptionTag = document.querySelector("#detailDescriptionTag");
+const addToCartButton = document.querySelector("#addToCartButton");
+const purchaseButton = document.querySelector("#purchaseButton");
 
 checkLogin();
 addAllElements();
 addAllEvents();
-fetchAndDisplayProductDetails(id); // Make sure this is called with the correct product ID
+fetchAndDisplayProductDetails(); // Make sure this is called with the correct product ID
 // editProductData();
 
 function addAllElements() {
@@ -194,58 +199,21 @@ function addAllEvents() {
     categorySelectBox.addEventListener("change", handleCategoryChange);
 }
 
-// async function fetchAndDisplayProductDetails(id) {
-//     try {
-//         const productDetails = await Api.get(`/products/${id}`);
-//         console.log(productDetails);
-//         nameInput.value = productDetails.name;
-//         categorySelectBox.value = productDetails.categoryId;
-//         descriptionInput.value = productDetails.description;
-//         stockInput.value = productDetails.stock;
-//         priceInput.value = productDetails.price;
-//         // Add logic to display the existing product image if applicable
-//     } catch (error) {
-//         console.error("Fetching product details failed: ", error);
-//         alert("Failed to load product details.");
-//     }
-// }
-
-
-
-async function editProductData() {
+async function fetchAndDisplayProductDetails() {
     const path = window.location.pathname;
     console.log(path);
     const id = path.split('/').pop();
     //id값 인트형으로 형변환
     const newId = parseInt(id);
-    const product = await Api.get(`/products/${newId}`);
-
-    console.log(newId);
-    // 객체 destructuring
-    const {
-        name,
-        description,
-        userName,
-        images,
-        price,
-    } = product;
-    const imageUrl = await getImageUrl(images);
-
-    console.log(name, description, images, userName);
-
-    productImageTag.src = imageUrl;
-    titleTag.innerText = name;
-    detailDescriptionTag.innerText = description;
-    priceTag.innerText = `${addCommas(price)}원`;
-    manufacturerTag.innerText = userName;
-
     try {
-        console.log(product);
-        nameInput.value = product.name;
-        categorySelectBox.value = product.categoryId;
-        descriptionInput.value = product.description;
-        stockInput.value = product.stock;
-        priceInput.value = product.price;
+        const productDetails = await Api.get(`/products/${newId}`);
+        console.log(productDetails);
+        nameInput.value = productDetails.name;
+        categorySelectBox.value = productDetails.categoryId;
+        descriptionInput.value = productDetails.description;
+        stockInput.value = productDetails.stock;
+        priceInput.value = productDetails.price;
+        // Add logic to display the existing product image if applicable
     } catch (error) {
         console.error("Fetching product details failed: ", error);
         alert("Failed to load product details.");
@@ -253,10 +221,58 @@ async function editProductData() {
 }
 
 
+
+// async function editProductData() {
+//     const path = window.location.pathname;
+//     console.log(path);
+//     const id = path.split('/').pop();
+//     //id값 인트형으로 형변환
+//     const newId = parseInt(id);
+//     const product = await Api.get(`/products/${newId}`);
+//
+//     console.log(newId);
+//     // 객체 destructuring
+//     const {
+//         name,
+//         description,
+//         userName,
+//         images,
+//         price,
+//     } = product;
+//     const imageUrl = await getImageUrl(images);
+//
+//     console.log(name, description, images, userName);
+//
+//     productImageTag.src = imageUrl;
+//     titleTag.innerText = name;
+//     detailDescriptionTag.innerText = description;
+//     priceTag.innerText = `${addCommas(price)}원`;
+//     manufacturerTag.innerText = userName;
+//
+//     try {
+//         console.log(product);
+//         nameInput.value = product.name;
+//         categorySelectBox.value = product.categoryId;
+//         descriptionInput.value = product.description;
+//         stockInput.value = product.stock;
+//         priceInput.value = product.price;
+//     } catch (error) {
+//         console.error("Fetching product details failed: ", error);
+//         alert("Failed to load product details.");
+//     }
+// }
+
+
 //수정 입력
 async function handleSubmit(e) {
     console.log("handleSubmit called");
     e.preventDefault();
+
+    const path = window.location.pathname;
+    console.log(path);
+    const id = path.split('/').pop();
+    //id값 인트형으로 형변환
+    const newId = parseInt(id);
 
     const name = nameInput.value;
     const categoryId = categorySelectBox.value;
@@ -312,11 +328,19 @@ async function handleSubmit(e) {
         }
 
         const updateData = {
-            userId, name, categoryId, description, images, stock, price,
+            userId,
+            name,
+            categoryId,
+            description,
+            images,
+            stock,
+            price,
         };
         console.log(updateData);
 
-        await Api.patch(`/products/${id}`, updateData);
+        await Api.patch(`/products/${newId}`, updateData);
+        // await Api.patch(`/products`, updateData);
+
 
         alert(`정상적으로 ${name} 제품이 수정되었습니다.`);
         window.location.href = `/products/category/${categoryId}`;
