@@ -115,6 +115,7 @@ async function handleSubmit(e) {
         console.log(updateData);
 
         await Api.patch(`/products`,newId ,updateData);
+
         console.log(categoryId);
         console.log(newId);
 
@@ -144,44 +145,27 @@ function handleImageUpload() {
     }
 }
 
-// async function addOptionsToSelectBox() {
-//     try {
-//         const categories = await Api.get("/categories");
-//         console.log(categories);
-//
-//         categories.forEach(({ id, name, themeClass }) => {
-//             const option = new Option(name, id);
-//             option.className = `notification ${themeClass}`;
-//             categorySelectBox.add(option);
-//         });
-//     } catch (error) {
-//         console.error("Error fetching categories: ", error);
-//     }
-// }
-
 async function addOptionsToSelectBox() {
-    try {
-        // Clear existing options first
-        while (categorySelectBox.options.length > 0) {
-            categorySelectBox.remove(0);
-        }
+    const categories = await Api.get("/categories");
+    console.log(categories);
+    categories.forEach((category) => {
+        // 객체 destructuring
+        const { id, name, themeClass } = category;
 
-        const categories = await Api.get("/categories");
-        console.log(categories);
-
-        categories.forEach(({ id, name, themeClass }) => {
-            const option = new Option(name, id);
-            option.className = `notification ${themeClass}`;
-            categorySelectBox.add(option);
-        });
-    } catch (error) {
-        console.error("Error fetching categories: ", error);
-    }
+        categorySelectBox.insertAdjacentHTML(
+            "beforeend",
+            `
+      <option value=${id} class="notification ${themeClass}"> ${name} </option>`
+        );
+    });
 }
 
+// 카테고리 선택 시, 선택박스에 해당 카테고리 테마가 반영되게 함.
 function handleCategoryChange() {
-    const selectedIndex = categorySelectBox.selectedIndex;
-    categorySelectBox.className = categorySelectBox.options[selectedIndex].className;
+    const index = categorySelectBox.selectedIndex;
+
+    categorySelectBox.className = categorySelectBox[index].className;
 }
 
 console.log({nameInput, categorySelectBox, descriptionInput, imageInput, stockInput, priceInput});
+
