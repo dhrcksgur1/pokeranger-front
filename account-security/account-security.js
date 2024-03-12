@@ -293,7 +293,7 @@ async function saveUserData(e) {
 
     console.log(data)
     // db에 수정된 정보 저장
-    await Api.patchWithPathValue("/users", userId, requestBodyToPatch);
+    await Api.patchWithPathValue("/users/modify", userId, requestBodyToPatch);
 
 
     alert("회원정보가 안전하게 저장되었습니다.");
