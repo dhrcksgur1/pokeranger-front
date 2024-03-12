@@ -31,12 +31,13 @@ function addAllEvents() {
 async function deleteUserData(e) {
   e.preventDefault();
 
-  const password = passwordInput.value;
-  const data = { password };
+  const userId = sessionStorage.getItem("UserId");
+  const passwordHash = passwordInput.value;
+  const data = { id, passwordHash };
 
   try {
     // 우선 입력된 비밀번호가 맞는지 확인 (틀리면 에러 발생함)
-    const userToDelete = await Api.post("/users/password-check", data);
+    const userToDelete = await Api.del("/users/password-check", data);
     const { id } = userToDelete;
 
     // 삭제 진행
