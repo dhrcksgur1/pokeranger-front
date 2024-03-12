@@ -135,9 +135,10 @@ console.log(newId);
 
   editProductButton.addEventListener("click", async () => {
     const getUserId = sessionStorage.getItem('userId');
-    if(getUserId !== getProductRegisterUserId){
+    const parseIntGetUerId =parseInt(getUserId);
+    if(parseIntGetUerId != getProductRegisterUserId){
       console.log(getProductRegisterUserId);
-      console.log(getUserId);
+      console.log(parseIntGetUerId);
 
       return alert("작성자가 아닙니다");
     }
@@ -155,7 +156,10 @@ console.log(newId);
 
 // 삭제 버튼 이벤트 리스너
   deleteProductButton.addEventListener("click", async () => {
-    if(getProductRegisterUserId !== sessionStorage.getItem('userId')){
+    if(parseIntGetUerId != getProductRegisterUserId){
+      console.log(getProductRegisterUserId);
+      console.log(parseIntGetUerId);
+
       return alert("작성자가 아닙니다");
     }
     try {
