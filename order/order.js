@@ -251,18 +251,6 @@ async function doCheckout() {
       cartItems: await Promise.all(cartItems)
     });
 
-
-    // -- 보류 -- 입력된 배송지정보를 유저db에 등록함
-    // const data = {
-    //   phoneNumber: receiverPhoneNumber,
-    //   address: {
-    //     postalCode,
-    //     address1,
-    //     address2,
-    //   },
-    // };
-    // await Api.post("/api/user/deliveryinfo", data);
-
     alert("결제 및 주문이 정상적으로 완료되었습니다.\n감사합니다.");
     window.location.href = "/order/complete";
   } catch (err) {
