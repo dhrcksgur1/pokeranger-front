@@ -54,6 +54,26 @@ async function insertProductData() {
   const newId = parseInt(id);
   const product = await Api.get(`/products/${newId}`);
 
+  const getUserId = sessionStorage.getItem('userId');
+  const parseIntGetUerId =parseInt(getUserId);
+
+  if(parseIntGetUerId === getUserId ){
+    // true면 수정 삭제 버튼 렌더링
+    const cns = document.getElementsByClassName('is-vertical')
+    const editBtn = document.createElement('button')
+    editBtn.innerText = '수정하기'
+    editBtn.addEventListener()
+    const deleteBtn = document.createElement('button')
+    deleteBtn.innerText = '삭제하기'
+    deleteBtn.addEventListener()
+
+
+    if(cns[0]){
+      cns[0].appendChild(editBtn)
+      cns[0].appendChild(deleteBtn)
+    }
+  }
+
 console.log(newId);
   // 객체 destructuring
   const {
@@ -134,14 +154,14 @@ console.log(newId);
 //   });
 
   editProductButton.addEventListener("click", async () => {
-    const getUserId = sessionStorage.getItem('userId');
-    const parseIntGetUerId =parseInt(getUserId);
-    if(parseIntGetUerId != getProductRegisterUserId){
-      console.log(getProductRegisterUserId);
-      console.log(parseIntGetUerId);
-
-      return alert("작성자가 아닙니다");
-    }
+    // const getUserId = sessionStorage.getItem('userId');
+    // const parseIntGetUerId =parseInt(getUserId);
+    // if(parseIntGetUerId != getProductRegisterUserId){
+    //   console.log(getProductRegisterUserId);
+    //   console.log(parseIntGetUerId);
+    //
+    //   return alert("작성자가 아닙니다");
+    // }
     const editItem = document.querySelector(`#a${newId}`);
     if (editItem) { // editItem이 존재하는지 확인
       editItem.addEventListener("click", (event) => {
@@ -156,14 +176,14 @@ console.log(newId);
 
 // 삭제 버튼 이벤트 리스너
   deleteProductButton.addEventListener("click", async () => {
-    const getUserId = sessionStorage.getItem('userId');
-    const parseIntGetUerId =parseInt(getUserId);
-    if(parseIntGetUerId != getProductRegisterUserId){
-      console.log(getProductRegisterUserId);
-      console.log(parseIntGetUerId);
-
-      return alert("작성자가 아닙니다");
-    }
+    // const getUserId = sessionStorage.getItem('userId');
+    // const parseIntGetUerId =parseInt(getUserId);
+    // if(parseIntGetUerId != getProductRegisterUserId){
+    //   console.log(getProductRegisterUserId);
+    //   console.log(parseIntGetUerId);
+    //
+    //   return alert("작성자가 아닙니다");
+    // }
     try {
       await Api.delete(`/products/${id}`);
       alert("제품이 삭제되었습니다.");
