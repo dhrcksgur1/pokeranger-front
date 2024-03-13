@@ -57,22 +57,7 @@ async function insertProductData() {
   const getUserId = sessionStorage.getItem('userId');
   const parseIntGetUerId =parseInt(getUserId);
 
-  if(parseIntGetUerId === getUserId ){
-    // true면 수정 삭제 버튼 렌더링
-    const cns = document.getElementsByClassName('is-vertical')
-    const editBtn = document.createElement('button')
-    editBtn.innerText = '수정하기'
-    editBtn.addEventListener()
-    const deleteBtn = document.createElement('button')
-    deleteBtn.innerText = '삭제하기'
-    deleteBtn.addEventListener()
 
-
-    if(cns[0]){
-      cns[0].appendChild(editBtn)
-      cns[0].appendChild(deleteBtn)
-    }
-  }
 
 console.log(newId);
   // 객체 destructuring
@@ -87,6 +72,52 @@ console.log(newId);
   } = product;
   const imageUrl = await getImageUrl(images);
 
+  if(parseIntGetUerId === userId ){
+    // true면 수정 삭제 버튼 렌더링
+    const cns = document.getElementsByClassName('is-vertical')
+    const editBtn = document.createElement('button')
+    editBtn.innerText = '수정하기'
+    editBtn.classList.add('button')
+    editBtn.classList.add('is-danger')
+    editBtn.classList.add('ml-2')
+    editBtn.addEventListener("click", async () => {
+      const editItem = document.querySelector(`#a${newId}`);
+      if (editItem) { // editItem이 존재하는지 확인
+        editItem.addEventListener("click", (event) => {
+          event.preventDefault(); // 기본 이벤트를 방지
+        });
+      } else {
+        console.error('Edit item not found');
+      }
+      window.location.href = `/product/edit/${id}`;
+    });
+
+    const deleteBtn = document.createElement('button')
+    deleteBtn.innerText = '삭제하기'
+    deleteBtn.classList.add('button')
+    deleteBtn.classList.add('is-dark')
+    deleteBtn.classList.add('ml-2')
+    deleteBtn.addEventListener("click", async () => {
+
+      try {
+        await Api.delete(`/products/${id}`);
+        alert("제품이 삭제되었습니다.");
+        sessionStorage.setItem('shouldReload', 'true');
+        window.history.back();
+
+      } catch (error) {
+        alert("제품 삭제에 실패했습니다.");
+      }
+    });
+
+
+
+    if(cns[0]){
+      cns[0].appendChild(editBtn)
+      cns[0].appendChild(deleteBtn)
+    }
+  }
+
   console.log(userId,name,description,images,userName);
 
   getProductRegisterUserId=userId;
@@ -97,12 +128,7 @@ console.log(newId);
   priceTag.innerText = `${addCommas(price)}원`;
   manufacturerTag.innerText = userName;
 
-  // if (isRecommended) {
-  //   titleTag.insertAdjacentHTML(
-  //     "beforeend",
-  //     '<span class="tag is-success is-rounded">추천</span>'
-  //   );
-  // }
+
 
   addToCartButton.addEventListener("click", async () => {
     try {
@@ -133,69 +159,6 @@ console.log(newId);
     }
   });
 
-//수정 버튼
-//   editProductButton.addEventListener("click", async () => {
-//
-//
-//     const editItem = document.querySelector(`#a${newId}`);
-//     editItem.addEventListener(
-//         "click",
-//         window.location.href = "/product/edit/{newId}";
-//
-//     );
-//
-//     try {
-//       alert("제품이 수정되었습니다.");
-//       // 삭제 성공 후 필요한 작업 수행, 예: 제품 목록 페이지로 이동
-//       // window.location.href = `/products/${newId}`;
-//     } catch (error) {
-//       alert("제품 수정에 실패했습니다.");
-//     }
-//   });
-
-  editProductButton.addEventListener("click", async () => {
-    // const getUserId = sessionStorage.getItem('userId');
-    // const parseIntGetUerId =parseInt(getUserId);
-    // if(parseIntGetUerId != getProductRegisterUserId){
-    //   console.log(getProductRegisterUserId);
-    //   console.log(parseIntGetUerId);
-    //
-    //   return alert("작성자가 아닙니다");
-    // }
-    const editItem = document.querySelector(`#a${newId}`);
-    if (editItem) { // editItem이 존재하는지 확인
-      editItem.addEventListener("click", (event) => {
-        event.preventDefault(); // 기본 이벤트를 방지
-      });
-    } else {
-      console.error('Edit item not found');
-    }
-      window.location.href = `/product/edit/${id}`;
-  });
-
-
-// 삭제 버튼 이벤트 리스너
-  deleteProductButton.addEventListener("click", async () => {
-    // const getUserId = sessionStorage.getItem('userId');
-    // const parseIntGetUerId =parseInt(getUserId);
-    // if(parseIntGetUerId != getProductRegisterUserId){
-    //   console.log(getProductRegisterUserId);
-    //   console.log(parseIntGetUerId);
-    //
-    //   return alert("작성자가 아닙니다");
-    // }
-    try {
-      await Api.delete(`/products/${id}`);
-      alert("제품이 삭제되었습니다.");
-      // 삭제 성공 후 필요한 작업 수행, 예: 제품 목록 페이지로 이동
-      // window.location.href = `/products/category/${categoryId}`;
-      sessionStorage.setItem('shouldReload', 'true');
-      window.history.back();
-
-    } catch (error) {
-      alert("제품 삭제에 실패했습니다.");
-    }
-  });
 
 }
 
