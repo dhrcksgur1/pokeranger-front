@@ -68,7 +68,6 @@ if (categories && typeof categories[Symbol.iterator] === 'function') {
 
 function attachSlider() {
   // 페이지 로드 완료 후 bulmaCarousel 라이브러리의 attach 함수를 사용합니다.
-  document.addEventListener('DOMContentLoaded', () => {
     const imageSlider = bulmaCarousel.attach("#slider", {
       autoplay: true,
       autoplaySpeed: 6000,
@@ -85,6 +84,5 @@ function attachSlider() {
     sliderArrowRight.addEventListener("click", () => {
       imageSlider[0].next();
     });
-  });
 }
 
