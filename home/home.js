@@ -1,7 +1,8 @@
 import * as Api from "../api.js";
 import { getImageUrl } from "../aws-s3.js";
 import { navigate, createNavbar } from "../useful-functions.js";
-// import {attach} from "bulma-carousel/src/js";
+// import bulmaCarousel from 'https://cdn.jsdelivr.net/npm/bulma-carousel@4.0.4/dist/js/bulma-carousel.min.js';
+
 
 
 // 요소(element), input 혹은 상수
@@ -28,21 +29,32 @@ async function addImageCardsToSlider() {
   console.log(categories);
 if (categories && typeof categories[Symbol.iterator] === 'function') {
   // categories가 반복 가능한 경우 여기에 코드를 작성하세요.
-  for (const category of categories) {
-      // 객체 destructuring
-      const { id, name, createAt, deletedAt} = category;
+    for (const category of categories) {
+        // 객체 destructuring
+        const { id, title, description, themeClass, imageKey } = category;
+        const imageUrl = await getImageUrl(imageKey);
 
-      sliderDiv.insertAdjacentHTML(
-        "beforeend",
-        `
-        <div class="card" id="category-${id}">
-            <p class="title is-3 is-spaced">${name}</p>
-          </div>
+        sliderDiv.insertAdjacentHTML(
+            "beforeend",
+            `
+      <div class="card" id="category-${id}">
+        <div class="notification ${themeClass}">
+          <p class="title is-3 is-spaced">${title}</p>
+          <p class="subtitle is-6">${description}</p>
         </div>
-      `
-      );
+        <div class="card-image">
+          <figure class="image is-3by2">
+            <img
+              src="${imageUrl}"
+              alt="카테고리 이미지"
+            />
+          </figure>
+        </div>
+      </div>
+    `
+        );
 
-      const card = document.querySelector(`#category-${id}`);
+        const card = document.querySelector(`#category-${id}`);
 
       // card.addEventListener("click", navigate(`/product-list/product-list.html`));
       card.addEventListener("click", navigate(`/products/category/${id}`));
