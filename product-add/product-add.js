@@ -43,21 +43,20 @@ async function handleSubmit(e) {
 
   const name = nameInput.value;
   const categoryId = categorySelectBox.value;
-  // const manufacturer = manufacturerInput.value;
-  // const shortDescription = shortDescriptionInput.value;
   const description = descriptionInput.value;
   const image = imageInput.files[0];
   const stock = parseInt(stockInput.value);
   const price = parseInt(priceInput.value);
+  const userId = sessionStorage.getItem("userId");
   let images = ''; // 기본 값으로 빈 문자열 설정
 
 
   // 입력 칸이 비어 있으면 진행 불가
   if (
+    !userId ||
     !name ||
     !categoryId ||
     // !manufacturer ||
-    // !shortDescription ||
     !description ||
     !stock ||
     !price
@@ -65,34 +64,45 @@ async function handleSubmit(e) {
     return alert("빈 칸 및 0이 없어야 합니다.");
   }
 
-  // if (image.size > 3e6) {
-  //   return alert("사진은 최대 2.5MB 크기까지 가능합니다.");
-  // }
+  if (image.size > 3e6) {
+    return alert("사진은 최대 2.5MB 크기까지 가능합니다.");
+  }
 
   // S3 에 이미지가 속할 폴더 이름은 카테고리명으로 함.
   const index = categorySelectBox.selectedIndex;
   const categoryName = categorySelectBox[index].text;
 
+  console.log("index is ", index);
+  console.log("category Name is ",categoryName);
+  console.log("imageInput is ",imageInput);
+
   try {
-     const images = await addImageToS3(imageInput, categoryName);
+  // Ensure that the input element is not null
+      const file = imageInput.files[0];
+     if (file) {
+        console.log(file);
+        console.log(file.name);
+        images = await addImageToS3(file, categoryName);
+        console.log("images ", images);
+   }
     const data = {
+      userId,
       name,
       categoryId,
-      // manufacturer,
-      // shortDescription,
       description,
       images,
       stock,
       price,
-      // searchKeywords,
     };
     console.log(data);
-
+    console.trace('Current Call Stack: get ');
     await Api.post("/products", data);
 
     alert(`정상적으로 ${name} 제품이 등록되었습니다.`);
+    window.location.href = `/products/category/${categoryId}`;
 
-    // 폼 초기화
+
+      // 폼 초기화
     registerProductForm.reset();
     fileNameSpan.innerText = "";
     // keywordsContainer.innerHTML = "";
@@ -123,14 +133,12 @@ async function addOptionsToSelectBox() {
   console.log(categories);
   categories.forEach((category) => {
     // 객체 destructuring
-    const { id, name, themeClass } = category;
-    // const { id, name, themeClass } = category;
-
+    const { id, title, themeClass } = category;
 
     categorySelectBox.insertAdjacentHTML(
       "beforeend",
       `
-      <option value=${id} class="notification ${themeClass}"> ${name} </option>`
+      <option value=${id} class="notification ${themeClass}"> ${title} </option>`
     );
   });
 }
@@ -142,57 +150,6 @@ function handleCategoryChange() {
   categorySelectBox.className = categorySelectBox[index].className;
 }
 console.log({nameInput, categorySelectBox, descriptionInput, imageInput, stockInput, priceInput});
-// 아래 함수는, 검색 키워드 추가 시, 해당 키워드로 만든 태그가 화면에 추가되도록 함.
-// 아래 배열은, 나중에 api 요청 시 사용함.
 
-// let searchKeywords = [];
-// function handleKeywordAdd(e) {
-//   e.preventDefault();
-//
-//   const newKeyword = searchKeywordInput.value;
-//
-//   if (!newKeyword) {
-//     return;
-//   }
-//
-//   if (searchKeywords.includes(newKeyword)) {
-//     return alert("이미 추가한 검색어입니다.");
-//   }
-//
-//   searchKeywords.push(newKeyword);
-//
-//   const random = randomId();
-//
-//   keywordsContainer.insertAdjacentHTML(
-//     "beforeend",
-//     `
-//     <div class="control" id="a${random}">
-//       <div class="tags has-addons">
-//         <span class="tag is-link is-light">${newKeyword}</span>
-//         <a class="tag is-link is-light is-delete"></a>
-//       </div>
-//     </div>
-//   `
-//   );
-//
-//   // x 버튼에 삭제 기능 추가.
-//   keywordsContainer
-//     .querySelector(`#a${random} .is-delete`)
-//     .addEventListener("click", handleKeywordDelete);
-//
-//   // 초기화 및 사용성 향상
-//   searchKeywordInput.value = "";
-//   searchKeywordInput.focus();
-// }
 
-function handleKeywordDelete(e) {
-  // a 태그 클릭 -> 옆의 span 태그의 inenerText가 키워드임.
-  const keywordToDelete = e.target.previousElementSibling.innerText;
 
-  // 배열에서 삭제
-  const index = searchKeywords.indexOf(keywordToDelete);
-  searchKeywords.splice(index, 1);
-
-  // 요소 삭제
-  e.target.parentElement.parentElement.remove();
-}

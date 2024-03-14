@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Input and Copy Button</title>
+    <style>
+        input[type="text"] {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 200px;
+        }
+        button.copy-button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<p>ssh 접속  </p>
+<input type="text" id="myInput1" value="ssh elice@34.64.187.23">
+<button class="copy-button1" onclick="copyToClipboard(myInput1)">Copy</button><br>
+
+<p>패ss워dd  </p>
+<input type="password" id="myInput2" value="dppscp0rrfwua6cxc98fez9yvr562rji">
+<button class="copy-button2" onclick="copyToClipboard(myInput2)">Copy</button><br>
+
+<p>백앤드 빌드  </p>
+<input type="text" id="myInput3" value="cd $HOME; cd team3-back; cd pokeranger-back;  gradle clean;gradle build;">
+<button class="copy-button3" onclick="copyToClipboard(myInput3)">Copy</button><br>
+
+<p>백앤드 실행  </p>
+<input type="text" id="myInput" value="cd $HOME; cd team3-back; cd pokeranger-back;  gradle clean; gradle build; ls; cd build;  cd libs; ls -la; ps -ef | grep java; nohup java -jar '-Dserver.port=8080' pokeranger-back-0.0.1-SNAPSHOT.jar.jar &">
+<button class="copy-button4" onclick="copyToClipboard()">Copy</button><br>
+
+<p>ssh 접속  </p>
+<input type="text" id="myInput" value="Hello, world!">
+<button class="copy-button5" onclick="copyToClipboard()">Copy</button><br>
+
+<p>ssh 접속  </p>
+<input type="text" id="myInput" value="Hello, world!">
+<button class="copy-button6" onclick="copyToClipboard()">Copy</button><br>
+
+<p>ssh 접속  </p>
+<input type="text" id="myInput" value="Hello, world!">
+<button class="copy-button7" onclick="copyToClipboard()">Copy</button><br>
+
+
+<script>
+    function copyToClipboard(inputElement) {
+        inputElement.select();
+        document.execCommand("copy");
+    }
+</script>
+</body>
+</html>
