@@ -57,26 +57,20 @@ async function addProductItemsToContainer() {
     productItemContainer.insertAdjacentHTML(
       "beforeend",
       `
-      <div class="message media product-item" id="a${random}">
-        <div class="media-left">
-          <figure class="image">
-            <img
-              src="${imageUrl}"
-              alt="제품 이미지"
-            />
-          </figure>
-        </div>
-        <div class="media-content">
-          <div class="content">
-            <p class="title">
-              ${name}
-             
-            </p>
-            <p class="description">${description}</p>
-            <p class="price">${addCommas(price)}원</p>
-          </div>
-        </div>
-      </div>
+<div class="product-item" id="a${random}">
+  <div class="media-left">
+    <figure class="image">
+      <img src="${imageUrl}" alt="제품 이미지" />
+    </figure>
+  </div>
+  <div class="media-content">
+    <div class="content">
+      <p class="title">${name}</p>
+      <p class="description">${description}</p>
+      <p class="price">${addCommas(price)}원</p>
+    </div>
+  </div>
+</div>
       `
         /*
         물품 3x3으로 등록
@@ -125,6 +119,11 @@ async function createPagination() {
       pageNumber = i;
       addProductItemsToContainer();
     });
+    button.style.margin = "auto";
+    button.style.display = "block";
+    button.style.marginTop = "50px";
+
+
     paginationContainer.appendChild(button);
   }
 }
