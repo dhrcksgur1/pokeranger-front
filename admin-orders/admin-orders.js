@@ -64,8 +64,8 @@ async function insertOrders() {
 
 
     ordersContainer.insertAdjacentHTML(
-      "beforeend",
-      `
+        "beforeend",
+        `
         <div class="columns orders-item" id="order-${id}">
           <div class="column is-2">${formattedDate}</div>
           <div class="column is-4 order-summary">${summaryTitle}</div>
@@ -109,7 +109,7 @@ async function insertOrders() {
     const index = statusSelectBox.selectedIndex;
     statusSelectBox.className = statusSelectBox[index].className;
 
-    // 이벤트 - 상태관리 박스 수정 시 바로 db 반영
+// 이벤트 - 상태관리 박스 수정 시 바로 db 반영 및 페이지 리로드
     statusSelectBox.addEventListener("change", async () => {
       const newStatus = statusSelectBox.value;
       const data = { status: newStatus };
@@ -119,7 +119,15 @@ async function insertOrders() {
       statusSelectBox.className = statusSelectBox[index].className;
 
       // api 요청
-      await Api.patch("/orders", id, data);
+      try {
+        await Api.patch("/orders", id, data);
+
+        // API 호출이 성공하면 페이지를 리로드한다.
+        window.location.reload();
+      } catch (error) {
+        console.error("상태 업데이트 중 오류가 발생했습니다.", error);
+        // 에러 처리 로직 (에러 메시지 표시 등)
+      }
     });
 
     // 이벤트 - 삭제버튼 클릭 시 Modal 창 띄우고, 동시에, 전역변수에 해당 주문의 id 할당
@@ -142,15 +150,26 @@ async function insertOrders() {
 async function deleteOrderData(e) {
   e.preventDefault();
 
+  if (!orderIdToDelete) {
+    alert("No order selected for deletion.");
+    return;
+  }
+
   try {
     await Api.delete("/orders", orderIdToDelete);
-
     // 삭제 성공
+    window.location.reload(); // Reloads the page upon successful update
+
     alert("주문 정보가 삭제되었습니다.");
 
     // 삭제한 아이템 화면에서 지우기
     const deletedItem = document.querySelector(`#order-${orderIdToDelete}`);
+    // Assume deliveryState is available. If not, consider fetching or storing it beforehand.
+    const deletedItemDeliveryState = deletedItem.getAttribute('data-delivery-state');
     deletedItem.remove();
+
+    // Update global and UI counts
+    updateOrderCounts(deletedItemDeliveryState);
 
     // 전역변수 초기화
     orderIdToDelete = "";
@@ -160,6 +179,21 @@ async function deleteOrderData(e) {
     alert(`주문정보 삭제 과정에서 오류가 발생하였습니다: ${err}`);
   }
 }
+function updateOrderCounts(deletedOrderDeliveryState) {
+  // Assuming 'ordersCount' is always decremented
+  const currentTotalOrders = parseInt(ordersCount.textContent.replace(/,/g, '')) - 1;
+  ordersCount.textContent = addCommas(currentTotalOrders);
+
+  // // '상품 준비 중' 상태의 주문 수도 감소시키기
+  // if (deletedOrderDeliveryState === '상품 준비중') {
+  //   const currentPreparingOrders = parseInt(prepareCount.textContent.replace(/,/g, '')) - 1;
+  //   prepareCount.textContent = currentPreparingOrders.toLocaleString();
+  // }
+
+}
+
+
+
 
 // Modal 창에서 아니오 클릭할 시, 전역 변수를 다시 초기화함.
 function cancelDelete() {
@@ -202,10 +236,6 @@ async function createPagination() {
       pageNumber = i;
       insertOrders();
     });
-    button.style.margin = "auto";
-    button.style.display = "block";
-    button.style.marginTop = "50px";
-
     paginationContainer.appendChild(button);
   }
 }

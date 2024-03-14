@@ -65,8 +65,8 @@ async function insertUsers() {
     // }
 
     usersContainer.insertAdjacentHTML(
-      "beforeend",
-      `
+        "beforeend",
+        `
         <div class="columns orders-item" id="user-${id}">
           <div class="column is-2">${formattedDate}</div>
           <div class="column is-2">${email}</div>
@@ -105,8 +105,10 @@ async function insertUsers() {
     roleSelectBox.className = roleSelectBox[index].className;
 
     // 이벤트 - 권한관리 박스 수정 시 바로 db 반영
+// 이벤트 - 권한관리 박스 수정 시 바로 db 반영 및 관리자 수 업데이트
     roleSelectBox.addEventListener("change", async () => {
       const newRole = roleSelectBox.value;
+      const prevRole = roleSelectBox.options[roleSelectBox.selectedIndex === 0 ? 1 : 0].value; // 이전 역할을 가져오기
       const data = { roles: newRole };
 
       // 선택한 옵션의 배경색 반영
@@ -114,8 +116,23 @@ async function insertUsers() {
       roleSelectBox.className = roleSelectBox[index].className;
 
       // api 요청
-      await Api.patch(`/users`,id, data);
+      await Api.patch(`/users`, id, data);
+
+      // 권한 변경에 따른 관리자 수 업데이트
+      updateAdminCountOnRoleChange(prevRole, newRole);
     });
+
+    function updateAdminCountOnRoleChange(previousRole, newRole) {
+      let currentAdminCount = parseInt(adminCount.innerText.replace(/,/g, ''));
+
+      if (previousRole !== "Admin" && newRole === "Admin") {
+        // 일반 사용자에서 관리자로 변경됨
+        adminCount.innerText = addCommas(++currentAdminCount);
+      } else if (previousRole === "Admin" && newRole !== "Admin") {
+        // 관리자에서 일반 사용자로 변경됨
+        adminCount.innerText = addCommas(--currentAdminCount);
+      }
+    }
 
     // 이벤트 - 삭제버튼 클릭 시 Modal 창 띄우고, 동시에, 전역변수에 해당 주문의 id 할당
     deleteButton.addEventListener("click", () => {
@@ -133,14 +150,19 @@ async function deleteUserData(e) {
   e.preventDefault();
 
   try {
+    const userToDelete = document.querySelector(`#user-${userIdToDelete}`);
+    const role = userToDelete.querySelector(`#roleSelectBox-${userIdToDelete}`).value;
+
     await Api.delete("/users", userIdToDelete);
 
     // 삭제 성공
     alert("회원 정보가 삭제되었습니다.");
 
     // 삭제한 아이템 화면에서 지우기
-    const deletedItem = document.querySelector(`#user-${userIdToDelete}`);
-    deletedItem.remove();
+    userToDelete.remove();
+
+    // 총 사용자 수와 관리자 수 업데이트
+    updateCountsAfterDeletion(role);
 
     // 전역변수 초기화
     userIdToDelete = "";
@@ -148,6 +170,19 @@ async function deleteUserData(e) {
     closeModal();
   } catch (err) {
     alert(`회원정보 삭제 과정에서 오류가 발생하였습니다: ${err}`);
+  }
+}
+
+
+function updateCountsAfterDeletion(role) {
+  // 총 사용자 수 감소
+  let currentUsersCount = parseInt(usersCount.innerText.replace(/,/g, ''));
+  usersCount.innerText = addCommas(--currentUsersCount);
+
+  // 삭제된 사용자가 관리자였다면, 관리자 수도 감소
+  if (role === "Admin") {
+    let currentAdminCount = parseInt(adminCount.innerText.replace(/,/g, ''));
+    adminCount.innerText = addCommas(--currentAdminCount);
   }
 }
 
@@ -192,11 +227,6 @@ async function createPagination() {
       pageNumber = i;
       insertUsers();
     });
-
-    button.style.margin = "auto";
-    button.style.display = "block";
-    button.style.marginTop = "50px";
-
     paginationContainer.appendChild(button);
   }
 }
