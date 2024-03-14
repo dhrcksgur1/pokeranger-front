@@ -13,7 +13,7 @@ import {
 const productItemContainer = document.querySelector("#producItemContainer");
 
 let pageNumber = 0;  // 현재 페이지 번호
-const pageSize = 10;  // 한 페이지에 보여줄 아이템의 수
+const pageSize = 9;  // 한 페이지에 보여줄 아이템의 수
 // checkUrlParams("category");
 addAllElements();
 addAllEvents();
@@ -119,9 +119,19 @@ async function createPagination() {
       pageNumber = i;
       addProductItemsToContainer();
     });
-    button.style.margin = "auto";
-    button.style.display = "block";
-    button.style.marginTop = "50px";
+
+    button.style.marginRight= "5px";
+    button.style.padding = "10px 20px";
+    button.style.border = "none";
+    button.style.outline ="none";
+    button.style.fontSize = "16px";
+    button.style.fontWeight = "600";
+    button.style.color = "white";
+    button.style.transition = "all 0.3s ease";
+    button.style.boxShadow = "0 4px 6px rgba(255, 121, 180, 0.4)";
+    button.style.borderRadius = "25px"
+    button.style.cursor = "pointer";
+    button.style.backgroundImage = "linear-gradient(to right, #89d4cf 0%, #6fb8df 100%)";
 
 
     paginationContainer.appendChild(button);

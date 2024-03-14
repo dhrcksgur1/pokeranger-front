@@ -7,8 +7,15 @@
   box-shadow: none;
 }
 
+#pagination{
+  margin : 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .image img {
-  margin-top: 10px;
+  margin: 10px 10px;
+
   display: block;
   height: auto;
   width: 100%;
