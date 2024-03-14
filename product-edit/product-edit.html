@@ -25,8 +25,8 @@
     <!-- AWS S3 사용하기 위한 파일 -->
     <script src="https://sdk.amazonaws.com/js/aws-sdk-2.410.0.min.js"></script>
     <!-- 커스텀 css, js -->
-    <link rel="stylesheet" href="/product-add/product-add.css" />
-    <script src="/product-add/product-add.js" type="module" defer></script>
+    <link rel="stylesheet" href="/product-edit/product-edit.css" />
+    <script src="/product-edit/product-edit.js"  type="module" defer></script>
   </head>
   <body>
     <!-- 헤더 -->
@@ -72,11 +72,11 @@
     <section class="section">
       <div class="container">
         <div class="block account-header">
-          <h1 class="subtitle is-4">제품판매</h1>
+          <h1 class="subtitle is-4">제품수정</h1>
         </div>
         <div class="register-product-form-container">
           <form class="box register-product-form-box" id="registerProductForm">
-            <p class="title is-5 has-text-primary">제품을 판매해 보세요</p>
+            <p class="title is-5 has-text-primary">제품을 수정해 보세요</p>
             <div class="field">
               <label class="label" for="nameInput">제품 이름</label>
               <div class="control">
@@ -100,32 +100,6 @@
                 </div>
               </div>
             </div>
-
-<!--            <div class="field">-->
-<!--              <label class="label" for="manufacturerInput">제조사</label>-->
-<!--              <div class="control">-->
-<!--                <input-->
-<!--                  class="input"-->
-<!--                  id="manufacturerInput"-->
-<!--                  type="text"-->
-<!--                  placeholder="OO의류제조(주)"-->
-<!--                  autocomplete="on"-->
-<!--                />-->
-<!--              </div>-->
-<!--            </div>-->
-
-<!--            <div class="field">-->
-<!--              <label class="label" for="shortDescriptionInput">요약 설명</label>-->
-<!--              <div class="control">-->
-<!--                <textarea-->
-<!--                  class="textarea"-->
-<!--                  id="shortDescriptionInput"-->
-<!--                  rows="3"-->
-<!--                  placeholder="제품에 대한 1~2문장의 설명을 적어 주세요."-->
-<!--                  autocomplete="on"-->
-<!--                ></textarea>-->
-<!--              </div>-->
-<!--            </div>-->
 
             <div class="field">
               <label class="label" for="descriptionInput"
@@ -195,25 +169,6 @@
               </div>
             </div>
 
-<!--            <div class="field">-->
-<!--              <label class="label" for="searchKeywordInput">검색 키워드</label>-->
-<!--              <div class="field has-addons">-->
-<!--                <div class="control header-search-input is-flex-grow-1">-->
-<!--                  <input-->
-<!--                    class="input"-->
-<!--                    id="searchKeywordInput"-->
-<!--                    type="text"-->
-<!--                    placeholder="남자옷"-->
-<!--                  />-->
-<!--                </div>-->
-<!--                <div class="control">-->
-<!--                  <button class="button is-primary" id="addKeywordButton">-->
-<!--                    추가하기-->
-<!--                  </button>-->
-<!--                </div>-->
-<!--              </div>-->
-<!--            </div>-->
-
             <div
               class="field is-grouped is-grouped-multiline mt-3"
               id="keywordContainer"
@@ -221,7 +176,7 @@
 
             <div class="mt-5">
               <button class="button is-primary is-fullwidth" id="submitButton">
-                제품 판매하기
+                제품 수정하기
               </button>
             </div>
           </form>

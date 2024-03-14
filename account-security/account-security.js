@@ -46,6 +46,7 @@ function addAllEvents() {
   saveCompleteButton.addEventListener("click", saveUserData);
 }
 
+let globalEmail;
 // input 및 주소찾기 버튼의 disabled <-> abled 상태를 토글함.
 function toggleTargets(e) {
   const toggleId = e.target.id;
@@ -102,18 +103,28 @@ function toggleTargets(e) {
 // 나중에 사용자가 데이터를 변경했는지 확인하기 위해, 전역 변수로 userData 설정
 let userData;
 async function insertUserData() {
-  userData = await Api.get("/users");
+    const userId = sessionStorage.getItem("userId");
+    console.log("insertUserData() function , userId is " , userId);
+    userData = await Api.get(`/users/${userId}`);
+    console.log(userData);
 
+if(!userData){
+    throw alert("유저 정보를 읽어올수 없습니다.");
+}
   // 객체 destructuring
-  const { fullName, email, address, phoneNumber } = userData;
+  const { name, email, address, phoneNumber } = userData;
+globalEmail = email;
+console.log(userData);
+console.log(name);
 
   // 서버에서 온 비밀번호는 해쉬 문자열인데, 이를 빈 문자열로 바꿈
   // 나중에 사용자가 비밀번호 변경을 위해 입력했는지 확인하기 위함임.
   userData.password = "";
 
   securityTitle.innerText = `회원정보 관리 (${email})`;
-  fullNameInput.value = fullName;
+  fullNameInput.value = name;
 
+console.log("name " , name ,fullNameInput.value);
   if (address) {
     const { postalCode, address1, address2 } = address;
 
@@ -256,10 +267,34 @@ async function saveUserData(e) {
   }
 
   try {
-    const { id } = userData;
+
+  const userType = sessionStorage.getItem("admin");
+  let inputUserType = "User";
+  if( userType )
+  {
+    inputUserType = "Admin";
+  }
+
+   const requestBodyToPatch = {
+
+   name:data.fullName,
+   email:globalEmail,
+   passwordHash: data.password,
+   phoneNumber : data.phoneNumber,
+   type:inputUserType,
+   address:data.address
+
+
+
+
+   }
+     const userId = sessionStorage.getItem("userId");
+    console.log("id", userId,"requestBodyToPatch : " ,requestBodyToPatch);
+
     console.log(data)
     // db에 수정된 정보 저장
-    await Api.patch("/users", id, data);
+    await Api.patchWithPathValue("/users/modify", userId, requestBodyToPatch);
+
 
     alert("회원정보가 안전하게 저장되었습니다.");
     disableForm();
