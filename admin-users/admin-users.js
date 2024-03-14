@@ -227,6 +227,9 @@ async function createPagination() {
       pageNumber = i;
       insertUsers();
     });
+    button.style.margin = "auto";
+    button.style.display = "block";
+    button.style.marginTop = "50px";
     paginationContainer.appendChild(button);
   }
 }
