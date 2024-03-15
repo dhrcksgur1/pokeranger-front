@@ -85,7 +85,7 @@ async function handleSubmit(e) {
     }
 
     if (imageFile.size > 3e6) {
-        return alert("사진은 최대 2.5MB 크기까지 가능합니다.");
+        return alert("사진은 최대 3MB 크기까지 가능합니다.");
     }
 
 

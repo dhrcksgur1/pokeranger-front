@@ -38,18 +38,18 @@ async function handleSubmit(e) {
     console.log(themeClass);
 
   // 입력 칸이 비어 있으면 진행 불가
-  if (!title || !description) {
-    return alert("빈 칸이 없어야 합니다.");
-  }
 
-  if (!themeClass) {
-    return alert("테마를 선택해 주세요.");
+  if (
+      !title ||
+      !themeClass ||
+      !image
+  ) {
+    return alert("빈 칸 및 0이 없어야 합니다.");
   }
 
   if (image.size > 3e6) {
-    return alert("사진은 최대 2.5MB 크기까지 가능합니다.");
+    return alert("사진은 최대 3MB 크기까지 가능합니다.");
   }
-
 
 
   try {
