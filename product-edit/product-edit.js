@@ -77,6 +77,7 @@ async function handleSubmit(e) {
         !name ||
         !categoryId ||
         !description ||
+        !imageFile ||
         !stock ||
         !price
     ) {
@@ -86,6 +87,7 @@ async function handleSubmit(e) {
     if (imageFile.size > 3e6) {
         return alert("사진은 최대 2.5MB 크기까지 가능합니다.");
     }
+
 
     // S3 에 이미지가 속할 폴더 이름은 카테고리명으로 함.
     const index = categorySelectBox.selectedIndex;

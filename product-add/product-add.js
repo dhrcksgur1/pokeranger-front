@@ -5,17 +5,12 @@ import { checkLogin, randomId, createNavbar } from "../../useful-functions.js";
 // 요소(element)들과 상수들
 const nameInput = document.querySelector("#nameInput");
 const categorySelectBox = document.querySelector("#categorySelectBox");
-const manufacturerInput = document.querySelector("#manufacturerInput");
-const shortDescriptionInput = document.querySelector("#shortDescriptionInput");
 const descriptionInput = document.querySelector(
   "#descriptionInput"
 );
 const imageInput = document.querySelector("#imageInput");
 const stockInput = document.querySelector("#stockInput");
 const priceInput = document.querySelector("#priceInput");
-const searchKeywordInput = document.querySelector("#searchKeywordInput");
-const addKeywordButton = document.querySelector("#addKeywordButton");
-const keywordsContainer = document.querySelector("#keywordContainer");
 const submitButton = document.querySelector("#submitButton");
 const registerProductForm = document.querySelector("#registerProductForm");
 
@@ -44,7 +39,7 @@ async function handleSubmit(e) {
   const name = nameInput.value;
   const categoryId = categorySelectBox.value;
   const description = descriptionInput.value;
-  const image = imageInput.files[0];
+  const file = imageInput.files[0];
   const stock = parseInt(stockInput.value);
   const price = parseInt(priceInput.value);
   const userId = sessionStorage.getItem("userId");
@@ -56,17 +51,18 @@ async function handleSubmit(e) {
     !userId ||
     !name ||
     !categoryId ||
-    // !manufacturer ||
     !description ||
-    !stock ||
+      !file ||
+      !stock ||
     !price
   ) {
     return alert("빈 칸 및 0이 없어야 합니다.");
   }
 
-  if (image.size > 3e6) {
-    return alert("사진은 최대 2.5MB 크기까지 가능합니다.");
-  }
+        if (file.size > 3e6) {
+            return alert("사진은 최대 2.5MB 크기까지 가능합니다.");
+        }
+
 
   // S3 에 이미지가 속할 폴더 이름은 카테고리명으로 함.
   const index = categorySelectBox.selectedIndex;
@@ -78,7 +74,6 @@ async function handleSubmit(e) {
 
   try {
   // Ensure that the input element is not null
-      const file = imageInput.files[0];
      if (file) {
         console.log(file);
         console.log(file.name);
