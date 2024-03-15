@@ -55,7 +55,7 @@ async function insertProductData() {
   const product = await Api.get(`/products/${newId}`);
 
   const getUserId = sessionStorage.getItem('userId');
-  const parseIntGetUerId =parseInt(getUserId);
+  const parseIntGetUserId =parseInt(getUserId);
 
 
 
@@ -72,49 +72,68 @@ console.log(newId);
   } = product;
   const imageUrl = await getImageUrl(images);
 
-  if(parseIntGetUerId === userId ){
+  if (parseIntGetUserId === userId) {
     // true면 수정 삭제 버튼 렌더링
-    const cns = document.getElementsByClassName('is-vertical')
-    const editBtn = document.createElement('button')
-    editBtn.innerText = '수정하기'
-    editBtn.classList.add('button')
-    editBtn.classList.add('is-danger')
-    editBtn.classList.add('ml-2')
-    editBtn.addEventListener("click", async () => {
-      const editItem = document.querySelector(`#a${newId}`);
-      if (editItem) { // editItem이 존재하는지 확인
-        editItem.addEventListener("click", (event) => {
-          event.preventDefault(); // 기본 이벤트를 방지
-        });
-      } else {
-        console.error('Edit item not found');
-      }
-      window.location.href = `/product/edit/${id}`;
-    });
+    const cns = document.getElementsByClassName('is-vertical');
 
-    const deleteBtn = document.createElement('button')
-    deleteBtn.innerText = '삭제하기'
-    deleteBtn.classList.add('button')
-    deleteBtn.classList.add('is-dark')
-    deleteBtn.classList.add('ml-2')
+    // 드롭다운 컨테이너 생성
+    const dropdown = document.createElement('div');
+    dropdown.classList.add('dropdown');
+    dropdown.classList.add('is-right');
+
+    // 드롭다운 트리거 버튼
+    const triggerBtn = document.createElement('button');
+    triggerBtn.classList.add('button', 'is-info', 'dropdown-trigger');
+    triggerBtn.innerText = '옵션';
+
+    // 드롭다운 메뉴
+    const dropdownMenu = document.createElement('div');
+    dropdownMenu.classList.add('dropdown-menu');
+    dropdownMenu.setAttribute('id', 'dropdown-menu');
+    dropdownMenu.setAttribute('role', 'menu');
+
+    // 드롭다운 메뉴 내용
+    const dropdownContent = document.createElement('div');
+    dropdownContent.classList.add('dropdown-content');
+
+    // 수정하기 버튼
+    const editBtn = document.createElement('a');
+    editBtn.href = `/product/edit/${id}`;
+    editBtn.classList.add('dropdown-item');
+    editBtn.innerText = '수정하기';
+
+    // 삭제하기 버튼
+    const deleteBtn = document.createElement('a');
+    deleteBtn.classList.add('dropdown-item');
+    deleteBtn.innerText = '삭제하기';
     deleteBtn.addEventListener("click", async () => {
-
       try {
         await Api.delete(`/products/${id}`);
         alert("제품이 삭제되었습니다.");
         sessionStorage.setItem('shouldReload', 'true');
         window.history.back();
-
       } catch (error) {
         alert("제품 삭제에 실패했습니다.");
       }
     });
 
+    // 드롭다운 메뉴에 버튼 추가
+    dropdownContent.appendChild(editBtn);
+    dropdownContent.appendChild(deleteBtn);
 
+    // 드롭다운 메뉴 구조 완성
+    dropdownMenu.appendChild(dropdownContent);
+    dropdown.appendChild(triggerBtn);
+    dropdown.appendChild(dropdownMenu);
 
-    if(cns[0]){
-      cns[0].appendChild(editBtn)
-      cns[0].appendChild(deleteBtn)
+    // 드롭다운 트리거 버튼 클릭 이벤트
+    triggerBtn.addEventListener('click', () => {
+      dropdown.classList.toggle('is-active');
+    });
+
+    // cns[0]에 드롭다운 추가
+    if (cns[0]) {
+      cns[0].appendChild(dropdown);
     }
   }
 
