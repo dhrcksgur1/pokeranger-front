@@ -7,55 +7,62 @@
   box-shadow: none;
 }
 
+#pagination{
+  margin : 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.image img {
+  margin: 10px 10px;
+
+  display: block;
+  height: auto;
+  width: 100%;
+}
+
+.product-item-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start; /* Aligns items to the left */
+  gap: 20px; /* Gap between items */
+}
+
 .product-item {
-  cursor: pointer;
+  display: flex;
+  flex-direction: column; /* Stacks items vertically */
+  align-items: center; /* Centers items horizontally */
+  text-align: center; /* Text centered under the image */
+  width: calc((100% - 40px) / 3); /* Adjust width to fit 3 items per row, accounting for the gap */
+  background-color: #f5f5f5;
 }
 
 .product-item .image {
-  margin: 0.5rem 1rem 0.5rem 0.5rem;
-  height: 200px;
-  width: 200px;
+  margin-bottom: 1rem; /* Space between the image and text */
+  width: 200px; /* Adjust as necessary */
+  height: 200px; /* Adjust as necessary */
+  display: flex;
+  justify-content: center;
 }
 
 .product-item .image img {
-  height: 200px;
+  height: 100%; /* Image height matches the container */
+  max-width: 100%; /* Prevents the image from exceeding container width */
+  object-fit: cover; /* Adjusts the image to cover the container */
 }
 
-.product-item p.title {
-  margin: 1rem 0;
-}
+@media only screen and (max-width: 768px) {
+  .product-item-container {
+    justify-content: center; /* Center items on narrower screens for visual balance */
+  }
 
-.product-item p.title .tag {
-  display: inline-block;
-  margin-left: 0.5rem;
-  margin-bottom: 1rem;
-  line-height: 1.5rem;
-}
-
-.product-item p.description {
-  font-size: 1.2rem;
-}
-
-.product-item p.price {
-  font-size: 2rem;
-  margin-top: 3.5rem;
-}
-
-.media + .media {
-  margin-top: 0.5rem;
-  padding-top: 0;
-}
-
-.message:not(:last-child) {
-  margin-bottom: 1rem;
-}
-
-@media only screen and (max-width: 500px) {
   .product-item {
-    display: block;
+    flex-basis: 100%; /* One item per row on narrow screens */
   }
 
   .product-item .image {
-    margin: 0.5rem auto;
+    margin: 0 auto; /* Center the image */
+    width: 200px; /* Image width on mobile */
   }
 }
+

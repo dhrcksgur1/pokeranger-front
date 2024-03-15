@@ -31,16 +31,24 @@ function addAllEvents() {
 async function deleteUserData(e) {
   e.preventDefault();
 
-  const password = passwordInput.value;
-  const data = { password };
+  let id  = sessionStorage.getItem("userId");
+  console.log("userId is " , id);
+  const passwordHash = passwordInput.value;
+  const data = { id, passwordHash };
 
   try {
     // 우선 입력된 비밀번호가 맞는지 확인 (틀리면 에러 발생함)
+    try {
     const userToDelete = await Api.post("/users/password-check", data);
-    const { id } = userToDelete;
 
+    }catch(err)
+    {
+        alert(`회원정보 삭제 과정에서 오류가 발생하였습니다.: ${err}`);
+     }
+
+    const userId = id;
     // 삭제 진행
-    await Api.delete("/users", id);
+    await Api.delete("/users", userId);
 
     // 삭제 성공
     alert("회원 정보가 안전하게 삭제되었습니다.");

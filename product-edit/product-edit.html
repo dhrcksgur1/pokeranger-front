@@ -25,8 +25,8 @@
     <!-- AWS S3 사용하기 위한 파일 -->
     <script src="https://sdk.amazonaws.com/js/aws-sdk-2.410.0.min.js"></script>
     <!-- 커스텀 css, js -->
-    <link rel="stylesheet" href="/product-add/product-add.css" />
-    <script src="/product-add/product-add.js" type="module" defer></script>
+    <link rel="stylesheet" href="/product-edit/product-edit.css" />
+    <script src="/product-edit/product-edit.js"  type="module" defer></script>
   </head>
   <body>
     <!-- 헤더 -->
@@ -72,11 +72,11 @@
     <section class="section">
       <div class="container">
         <div class="block account-header">
-          <h1 class="subtitle is-4">제품판매</h1>
+          <h1 class="subtitle is-4">제품수정</h1>
         </div>
         <div class="register-product-form-container">
           <form class="box register-product-form-box" id="registerProductForm">
-            <p class="title is-5 has-text-primary">제품을 판매해 보세요</p>
+            <p class="title is-5 has-text-primary">제품을 수정해 보세요</p>
             <div class="field">
               <label class="label" for="nameInput">제품 이름</label>
               <div class="control">
@@ -84,7 +84,6 @@
                   class="input"
                   id="nameInput"
                   type="text"
-                  placeholder="로얄 캐닌 어덜트 3.5kg"
                   autocomplete="on"
                 />
               </div>
@@ -101,7 +100,6 @@
               </div>
             </div>
 
-
             <div class="field">
               <label class="label" for="descriptionInput"
                 >상세 설명</label
@@ -111,7 +109,6 @@
                   class="textarea"
                   id="descriptionInput"
                   rows="8"
-                  placeholder="제품에 대한 상세 설명을 적어 주세요."
                   autocomplete="on"
                 ></textarea>
               </div>
@@ -170,8 +167,6 @@
               </div>
             </div>
 
-
-
             <div
               class="field is-grouped is-grouped-multiline mt-3"
               id="keywordContainer"
@@ -179,7 +174,7 @@
 
             <div class="mt-5">
               <button class="button is-primary is-fullwidth" id="submitButton">
-                제품 판매하기
+                제품 수정하기
               </button>
             </div>
           </form>

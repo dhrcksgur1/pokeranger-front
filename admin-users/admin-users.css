@@ -14,6 +14,13 @@
   padding-bottom: 0.7rem;
 }
 
+#pagination{
+  margin : 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .heading {
   font-size: 0.8rem;
   text-transform: none;
@@ -45,4 +52,9 @@
 }
 .modal .buttons {
   justify-content: center;
+}
+
+/* 외부 css 재정의 */
+*,::after,::before {
+  box-sizing: revert;
 }

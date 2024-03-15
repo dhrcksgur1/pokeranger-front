@@ -3,13 +3,13 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Shopping Mall</title>
+    <title>PokeRanger</title>
     <!-- 아이콘 -->
     <link
       rel="icon"
       type="image/png"
       sizes="16x16"
-      href="/elice-rabbit-favicon.png"
+      href="/pokerangerdog.png"
     />
     <!-- bulma css -->
     <link
@@ -32,8 +32,8 @@
       <div class="container mt-3">
         <div class="navbar-brand">
           <a class="navbar-item" href="/">
-            <img src="/elice-rabbit.png" width="30" height="30" />
-            <span class="has-text-link">Shopping Mall</span>
+            <img src="/pokerangerdog.png" width="30" height="30" />
+            <span class="has-text-link">PokeRanger</span>
           </a>
 
           <a
@@ -89,7 +89,7 @@
         </nav>
 
         <!-- 회원 목록 -->
-        <div class="container orders-container" id="usersContainer">
+        <div class="container orders-container">
           <div
             class="columns notification is-info is-light is-mobile orders-top"
           >
@@ -99,7 +99,9 @@
             <div class="column is-2">권한</div>
             <div class="column is-2">관리</div>
           </div>
+          <p id="usersContainer"></p>
         </div>
+        <div id="pagination"></div>
       </div>
     </section>
 

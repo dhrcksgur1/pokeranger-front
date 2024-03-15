@@ -109,6 +109,7 @@ const putToDb = async (storeName, key, dataModifyFunc) => {
   if (!database) {
     database = await openDatabase();
   }
+  console.log(key);
 
   const transaction = database.transaction([storeName], "readwrite");
   const store = transaction.objectStore(storeName);
