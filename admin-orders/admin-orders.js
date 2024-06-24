@@ -16,6 +16,9 @@ const modalCloseButton = document.querySelector("#modalCloseButton");
 const deleteCompleteButton = document.querySelector("#deleteCompleteButton");
 const deleteCancelButton = document.querySelector("#deleteCancelButton");
 
+let pageNumber = 0;  // 현재 페이지 번호
+const pageSize = 10;  // 한 페이지에 보여줄 아이템의 수
+
 checkAdmin();
 addAllElements();
 addAllEvents();
@@ -24,6 +27,8 @@ addAllEvents();
 function addAllElements() {
   createNavbar();
   insertOrders();
+  createPagination();
+  fetchAllUsers();
 }
 
 // 여러 개의 addEventListener들을 묶어주어서 코드를 깔끔하게 하는 역할임.
@@ -38,56 +43,51 @@ function addAllEvents() {
 // 페이지 로드 시 실행, 삭제할 주문 id를 전역변수로 관리함
 let orderIdToDelete;
 async function insertOrders() {
-  const orders = await Api.get("/orders");
+  const userId = sessionStorage.getItem("userId");
+  const orders = await Api.get(`/orders?userId=${userId}&page=${pageNumber}&size=${pageSize}`);
 
-  const summary = {
-    ordersCount: 0,
-    prepareCount: 0,
-    deliveryCount: 0,
-    completeCount: 0,
-  };
+  const ordersData = orders.content;
+  ordersContainer.innerHTML = '';
 
-  for (const order of orders) {
-    const { id, totalPrice, createdAt, summaryTitle, status } = order;
+
+
+  for (const order of ordersData) {
+    const { id, totalCost, createdAt, summaryTitle, deliveryState } = order;
     console.log(summaryTitle)
-    console.log(status)
-    const date = createdAt;
+    console.log(deliveryState)
+    const date = new Date(createdAt);
+    const formattedDate = new Intl.DateTimeFormat('ko-KR', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    }).format(date);
 
-    summary.ordersCount += 1;
-
-    if (status === "상품 준비중") {
-      summary.prepareCount += 1;
-    } else if (status === "상품 배송중") {
-      summary.deliveryCount += 1;
-    } else if (status === "배송완료") {
-      summary.completeCount += 1;
-    }
 
     ordersContainer.insertAdjacentHTML(
-      "beforeend",
-      `
+        "beforeend",
+        `
         <div class="columns orders-item" id="order-${id}">
-          <div class="column is-2">${date}</div>
+          <div class="column is-2">${formattedDate}</div>
           <div class="column is-4 order-summary">${summaryTitle}</div>
-          <div class="column is-2">${addCommas(totalPrice)}</div>
+          <div class="column is-2">${addCommas(totalCost)}</div>
           <div class="column is-2">
             <div class="select" >
               <select id="statusSelectBox-${id}">
                 <option 
                   class="has-background-danger-light has-text-danger"
-                  ${status === "상품 준비중" ? "selected" : ""} 
+                  ${deliveryState === "상품 준비중" ? "selected" : ""} 
                   value="상품 준비중">
                   상품 준비중
                 </option>
                 <option 
                   class="has-background-primary-light has-text-primary"
-                  ${status === "상품 배송중" ? "selected" : ""} 
+                  ${deliveryState === "상품 배송중" ? "selected" : ""} 
                   value="상품 배송중">
                   상품 배송중
                 </option>
                 <option 
                   class="has-background-grey-light"
-                  ${status === "배송완료" ? "selected" : ""} 
+                  ${deliveryState === "배송완료" ? "selected" : ""} 
                   value="배송완료">
                   배송완료
                 </option>
@@ -109,7 +109,7 @@ async function insertOrders() {
     const index = statusSelectBox.selectedIndex;
     statusSelectBox.className = statusSelectBox[index].className;
 
-    // 이벤트 - 상태관리 박스 수정 시 바로 db 반영
+// 이벤트 - 상태관리 박스 수정 시 바로 db 반영 및 페이지 리로드
     statusSelectBox.addEventListener("change", async () => {
       const newStatus = statusSelectBox.value;
       const data = { status: newStatus };
@@ -119,36 +119,57 @@ async function insertOrders() {
       statusSelectBox.className = statusSelectBox[index].className;
 
       // api 요청
-      await Api.patch("/orders", id, data);
+      try {
+        await Api.patch("/orders", id, data);
+
+        // API 호출이 성공하면 페이지를 리로드한다.
+        window.location.reload();
+      } catch (error) {
+        console.error("상태 업데이트 중 오류가 발생했습니다.", error);
+        // 에러 처리 로직 (에러 메시지 표시 등)
+      }
     });
 
     // 이벤트 - 삭제버튼 클릭 시 Modal 창 띄우고, 동시에, 전역변수에 해당 주문의 id 할당
     deleteButton.addEventListener("click", () => {
-      orderIdToDelete = id;
-      openModal();
+      // 배송 상태가 '배송 준비 중'인 경우에만 삭제 모달 창을 열어줍니다.
+      if (deliveryState === "상품 준비중") {
+        orderIdToDelete = id;
+        openModal();
+      } else {
+        // 다른 상태의 주문은 삭제할 수 없다는 경고 메시지를 표시합니다.
+        alert("배송 준비 중인 주문만 삭제할 수 있습니다.");
+      }
     });
   }
 
-  // 총 요약 값 삽입
-  ordersCount.innerText = addCommas(summary.ordersCount);
-  prepareCount.innerText = addCommas(summary.prepareCount);
-  deliveryCount.innerText = addCommas(summary.deliveryCount);
-  completeCount.innerText = addCommas(summary.completeCount);
+
 }
 
 // db에서 주문정보 삭제
 async function deleteOrderData(e) {
   e.preventDefault();
 
+  if (!orderIdToDelete) {
+    alert("No order selected for deletion.");
+    return;
+  }
+
   try {
     await Api.delete("/orders", orderIdToDelete);
-
     // 삭제 성공
+    window.location.reload(); // Reloads the page upon successful update
+
     alert("주문 정보가 삭제되었습니다.");
 
     // 삭제한 아이템 화면에서 지우기
     const deletedItem = document.querySelector(`#order-${orderIdToDelete}`);
+    // Assume deliveryState is available. If not, consider fetching or storing it beforehand.
+    const deletedItemDeliveryState = deletedItem.getAttribute('data-delivery-state');
     deletedItem.remove();
+
+    // Update global and UI counts
+    updateOrderCounts(deletedItemDeliveryState);
 
     // 전역변수 초기화
     orderIdToDelete = "";
@@ -158,6 +179,21 @@ async function deleteOrderData(e) {
     alert(`주문정보 삭제 과정에서 오류가 발생하였습니다: ${err}`);
   }
 }
+function updateOrderCounts(deletedOrderDeliveryState) {
+  // Assuming 'ordersCount' is always decremented
+  const currentTotalOrders = parseInt(ordersCount.textContent.replace(/,/g, '')) - 1;
+  ordersCount.textContent = addCommas(currentTotalOrders);
+
+  // // '상품 준비 중' 상태의 주문 수도 감소시키기
+  // if (deletedOrderDeliveryState === '상품 준비중') {
+  //   const currentPreparingOrders = parseInt(prepareCount.textContent.replace(/,/g, '')) - 1;
+  //   prepareCount.textContent = currentPreparingOrders.toLocaleString();
+  // }
+
+}
+
+
+
 
 // Modal 창에서 아니오 클릭할 시, 전역 변수를 다시 초기화함.
 function cancelDelete() {
@@ -181,4 +217,85 @@ function keyDownCloseModal(e) {
   if (e.keyCode === 27) {
     closeModal();
   }
+}
+
+async function createPagination() {
+
+  const userId = sessionStorage.getItem("userId");
+  const totalOrders = await Api.get(`/orders?userId=${userId}`);
+
+  const totalPages = totalOrders.totalPages; // 'totalPages' 키에 접근
+
+  const paginationContainer = document.getElementById('pagination');
+  paginationContainer.innerHTML = ''; // 기존의 페이지네이션 버튼을 초기화합니다.
+
+  for(let i = 0; i < totalPages; i++) {
+    const button = document.createElement('button');
+    button.innerText = i + 1;
+    button.addEventListener('click', function() {
+      pageNumber = i;
+      insertOrders();
+    });
+
+    button.style.marginRight= "5px";
+    button.style.padding = "10px 20px";
+    button.style.border = "none";
+    button.style.outline ="none";
+    button.style.fontSize = "16px";
+    button.style.fontWeight = "600";
+    button.style.color = "white";
+    button.style.transition = "all 0.3s ease";
+    button.style.boxShadow = "0 4px 6px rgba(255, 121, 180, 0.4)";
+    button.style.borderRadius = "25px"
+    button.style.cursor = "pointer";
+    button.style.backgroundImage = "linear-gradient(to right, #89d4cf 0%, #6fb8df 100%)";
+
+    paginationContainer.appendChild(button);
+  }
+}
+
+async function fetchAllUsers() {
+  let isLastPage = false;
+  let number = 0;
+  const size = 100; // 원하는 페이지 크기 설정
+  let allOrders = [];
+  const userId = sessionStorage.getItem("userId");
+
+  const summary = {
+    ordersCount: 0,
+    prepareCount: 0,
+    deliveryCount: 0,
+    completeCount: 0,
+  };
+
+  while (!isLastPage) {
+    const response = await Api.get(`/orders?userId=${userId}&page=${number}&size=${size}`);
+    // API 응답 구조에 따라 데이터와 '마지막 페이지 여부'를 확인
+    // 예시에서는 response.data가 사용자 배열이고, response.lastPage로 마지막 페이지 여부를 판단한다고 가정
+    allOrders = allOrders.concat(response.content);
+    isLastPage = response.last; // 실제 API 응답에 따라 조정 필요
+
+    number++; // 다음 페이지로
+  }
+
+  for (const order of allOrders) {
+    const { deliveryState } = order;
+
+
+    summary.ordersCount += 1;
+
+    if (deliveryState === "상품 준비중") {
+      summary.prepareCount += 1;
+    } else if (deliveryState === "상품 배송중") {
+      summary.deliveryCount += 1;
+    } else if (deliveryState === "배송완료") {
+      summary.completeCount += 1;
+    }
+  }
+  // 총 요약 값 삽입
+  ordersCount.innerText = addCommas(summary.ordersCount);
+  prepareCount.innerText = addCommas(summary.prepareCount);
+  deliveryCount.innerText = addCommas(summary.deliveryCount);
+  completeCount.innerText = addCommas(summary.completeCount);
+
 }

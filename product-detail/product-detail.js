@@ -4,6 +4,7 @@ import {
   getUrlParams,
   addCommas,
   checkUrlParams,
+    navigate,
   createNavbar,
 } from "../../useful-functions.js";
 import { addToDb, putToDb } from "../../indexed-db.js";
@@ -16,7 +17,13 @@ const detailDescriptionTag = document.querySelector("#detailDescriptionTag");
 const addToCartButton = document.querySelector("#addToCartButton");
 const purchaseButton = document.querySelector("#purchaseButton");
 
-checkUrlParams("id");
+//수정삭제 추가
+const editProductButton = document.querySelector("#editProductButton");
+const deleteProductButton = document.querySelector("#deleteProductButton");
+
+let getProductRegisterUserId;
+
+// checkUrlParams("id");
 addAllElements();
 addAllEvents();
 
@@ -29,33 +36,118 @@ function addAllElements() {
 // addEventListener들을 묶어주어서 코드를 깔끔하게 하는 역할임.
 function addAllEvents() {}
 
-async function insertProductData() {
-  const { id } = getUrlParams();
-  const product = await Api.get(`/products/${id}`);
 
+//삭제후에 페이지 리로드
+window.addEventListener('pageshow', (event) => {
+  // Check if there's a flag indicating we should reload the page
+  if (sessionStorage.getItem('shouldReload') === 'true') {
+    sessionStorage.removeItem('shouldReload'); // Clear the flag to avoid reloading again on the next visit
+    window.location.reload(); // Reload the page
+  }
+});
+
+async function insertProductData() {
+  const path = window.location.pathname;
+  console.log(path);
+  const id = path.split('/').pop();
+  //id값 인트형으로 형변환
+  const newId = parseInt(id);
+  const product = await Api.get(`/products/${newId}`);
+
+  const getUserId = sessionStorage.getItem('userId');
+  const parseIntGetUserId =parseInt(getUserId);
+
+
+
+console.log(newId);
   // 객체 destructuring
   const {
-    title,
-    detailDescription,
-    menufacturer,
-    imageKey,
-    isRecommended,
+    userId,
+    name,
+    description,
+     userName,
+    images,
+    // isRecommended,
     price,
   } = product;
-  const imageUrl = await getImageUrl(imageKey);
+  const imageUrl = await getImageUrl(images);
+
+  if (parseIntGetUserId === userId) {
+    // true면 수정 삭제 버튼 렌더링
+    const cns = document.getElementsByClassName('is-vertical');
+
+    // 드롭다운 컨테이너 생성
+    const dropdown = document.createElement('div');
+    dropdown.classList.add('dropdown');
+    dropdown.classList.add('is-right');
+
+    // 드롭다운 트리거 버튼
+    const triggerBtn = document.createElement('button');
+    triggerBtn.classList.add('button', 'is-info', 'dropdown-trigger');
+    triggerBtn.innerText = '옵션';
+
+    // 드롭다운 메뉴
+    const dropdownMenu = document.createElement('div');
+    dropdownMenu.classList.add('dropdown-menu');
+    dropdownMenu.setAttribute('id', 'dropdown-menu');
+    dropdownMenu.setAttribute('role', 'menu');
+
+    // 드롭다운 메뉴 내용
+    const dropdownContent = document.createElement('div');
+    dropdownContent.classList.add('dropdown-content');
+
+    // 수정하기 버튼
+    const editBtn = document.createElement('a');
+    editBtn.href = `/product/edit/${id}`;
+    editBtn.classList.add('dropdown-item');
+    editBtn.innerText = '수정하기';
+
+    // 삭제하기 버튼
+    const deleteBtn = document.createElement('a');
+    deleteBtn.classList.add('dropdown-item');
+    deleteBtn.innerText = '삭제하기';
+    deleteBtn.addEventListener("click", async () => {
+      try {
+        await Api.delete(`/products/${id}`);
+        alert("제품이 삭제되었습니다.");
+        sessionStorage.setItem('shouldReload', 'true');
+        window.history.back();
+      } catch (error) {
+        alert("제품 삭제에 실패했습니다.");
+      }
+    });
+
+    // 드롭다운 메뉴에 버튼 추가
+    dropdownContent.appendChild(editBtn);
+    dropdownContent.appendChild(deleteBtn);
+
+    // 드롭다운 메뉴 구조 완성
+    dropdownMenu.appendChild(dropdownContent);
+    dropdown.appendChild(triggerBtn);
+    dropdown.appendChild(dropdownMenu);
+
+    // 드롭다운 트리거 버튼 클릭 이벤트
+    triggerBtn.addEventListener('click', () => {
+      dropdown.classList.toggle('is-active');
+    });
+
+    // cns[0]에 드롭다운 추가
+    if (cns[0]) {
+      cns[0].appendChild(dropdown);
+    }
+  }
+
+  console.log(userId,name,description,images,userName);
+
+  getProductRegisterUserId=userId;
 
   productImageTag.src = imageUrl;
-  titleTag.innerText = title;
-  detailDescriptionTag.innerText = detailDescription;
-  manufacturerTag.innerText = menufacturer;
+  titleTag.innerText = name;
+  detailDescriptionTag.innerText = description;
   priceTag.innerText = `${addCommas(price)}원`;
+  manufacturerTag.innerText = userName;
 
-  if (isRecommended) {
-    titleTag.insertAdjacentHTML(
-      "beforeend",
-      '<span class="tag is-success is-rounded">추천</span>'
-    );
-  }
+
 
   addToCartButton.addEventListener("click", async () => {
     try {
@@ -85,6 +177,8 @@ async function insertProductData() {
       window.location.href = "/order";
     }
   });
+
+
 }
 
 async function insertDb(product) {

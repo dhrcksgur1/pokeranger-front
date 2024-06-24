@@ -11,6 +11,9 @@ const modalCloseButton = document.querySelector("#modalCloseButton");
 const deleteCompleteButton = document.querySelector("#deleteCompleteButton");
 const deleteCancelButton = document.querySelector("#deleteCancelButton");
 
+let pageNumber = 0;  // 현재 페이지 번호
+const pageSize = 20;  // 한 페이지에 보여줄 아이템의 수
+
 checkAdmin();
 addAllElements();
 addAllEvents();
@@ -19,6 +22,8 @@ addAllEvents();
 function addAllElements() {
   createNavbar();
   insertUsers();
+  createPagination();
+  fetchAllUsers();
 }
 
 // 여러 개의 addEventListener들을 묶어주어서 코드를 깔끔하게 하는 역할임.
@@ -33,44 +38,52 @@ function addAllEvents() {
 // 페이지 로드 시 실행, 삭제할 회원 id를 전역변수로 관리함
 let userIdToDelete;
 async function insertUsers() {
-  const users = await Api.get("/users/all");
+  const users = await Api.get(`/users?page=${pageNumber}&size=${pageSize}`);
 
+  const usersData = users.content;
+  usersContainer.innerHTML = '';
+  console.log(users);
   // 총 요약에 활용
-  const summary = {
-    usersCount: 0,
-    adminCount: 0,
-  };
+  // const summary = {
+  //   usersCount: 0,
+  //   adminCount: 0,
+  // };
 
-  for (const user of users) {
-    const { id, email, fullName, roles, createdAt } = user;
-    const date = createdAt;
+  for (const user of usersData) {
+    const { id, email, name, type, createdAt } = user;
+    const date = new Date(createdAt);
+    const formattedDate = new Intl.DateTimeFormat('ko-KR', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    }).format(date);
 
-    summary.usersCount += 1;
-
-    if (roles.includes('ADMIN')) {
-      summary.adminCount += 1;
-    }
+    // summary.usersCount += 1;
+    //
+    // if (type.includes('Admin')) {
+    //   summary.adminCount += 1;
+    // }
 
     usersContainer.insertAdjacentHTML(
-      "beforeend",
-      `
+        "beforeend",
+        `
         <div class="columns orders-item" id="user-${id}">
-          <div class="column is-2">${date}</div>
+          <div class="column is-2">${formattedDate}</div>
           <div class="column is-2">${email}</div>
-          <div class="column is-2">${fullName}</div>
+          <div class="column is-2">${name}</div>
           <div class="column is-2">
             <div class="select" >
               <select id="roleSelectBox-${id}">
                 <option 
                   class="has-background-link-light has-text-link"
-                  ${roles.includes('ADMIN') === false ? "selected" : ""} 
-                  value="USER">
+                  ${type.includes('User') === false ? "selected" : ""} 
+                  value="User">
                   일반사용자
                 </option>
                 <option 
                   class="has-background-danger-light has-text-danger"
-                  ${roles.includes('ADMIN') === true ? "selected" : ""} 
-                  value="ADMIN">
+                  ${type.includes('Admin') === true ? "selected" : ""} 
+                  value="Admin">
                   관리자
                 </option>
               </select>
@@ -92,8 +105,10 @@ async function insertUsers() {
     roleSelectBox.className = roleSelectBox[index].className;
 
     // 이벤트 - 권한관리 박스 수정 시 바로 db 반영
+// 이벤트 - 권한관리 박스 수정 시 바로 db 반영 및 관리자 수 업데이트
     roleSelectBox.addEventListener("change", async () => {
       const newRole = roleSelectBox.value;
+      const prevRole = roleSelectBox.options[roleSelectBox.selectedIndex === 0 ? 1 : 0].value; // 이전 역할을 가져오기
       const data = { roles: newRole };
 
       // 선택한 옵션의 배경색 반영
@@ -101,8 +116,23 @@ async function insertUsers() {
       roleSelectBox.className = roleSelectBox[index].className;
 
       // api 요청
-      await Api.patch("/users", id, data);
+      await Api.patch(`/users`, id, data);
+
+      // 권한 변경에 따른 관리자 수 업데이트
+      updateAdminCountOnRoleChange(prevRole, newRole);
     });
+
+    function updateAdminCountOnRoleChange(previousRole, newRole) {
+      let currentAdminCount = parseInt(adminCount.innerText.replace(/,/g, ''));
+
+      if (previousRole !== "Admin" && newRole === "Admin") {
+        // 일반 사용자에서 관리자로 변경됨
+        adminCount.innerText = addCommas(++currentAdminCount);
+      } else if (previousRole === "Admin" && newRole !== "Admin") {
+        // 관리자에서 일반 사용자로 변경됨
+        adminCount.innerText = addCommas(--currentAdminCount);
+      }
+    }
 
     // 이벤트 - 삭제버튼 클릭 시 Modal 창 띄우고, 동시에, 전역변수에 해당 주문의 id 할당
     deleteButton.addEventListener("click", () => {
@@ -112,8 +142,7 @@ async function insertUsers() {
   }
 
   // 총 요약에 값 삽입
-  usersCount.innerText = addCommas(summary.usersCount);
-  adminCount.innerText = addCommas(summary.adminCount);
+
 }
 
 // db에서 회원정보 삭제
@@ -121,14 +150,19 @@ async function deleteUserData(e) {
   e.preventDefault();
 
   try {
+    const userToDelete = document.querySelector(`#user-${userIdToDelete}`);
+    const role = userToDelete.querySelector(`#roleSelectBox-${userIdToDelete}`).value;
+
     await Api.delete("/users", userIdToDelete);
 
     // 삭제 성공
     alert("회원 정보가 삭제되었습니다.");
 
     // 삭제한 아이템 화면에서 지우기
-    const deletedItem = document.querySelector(`#user-${userIdToDelete}`);
-    deletedItem.remove();
+    userToDelete.remove();
+
+    // 총 사용자 수와 관리자 수 업데이트
+    updateCountsAfterDeletion(role);
 
     // 전역변수 초기화
     userIdToDelete = "";
@@ -136,6 +170,19 @@ async function deleteUserData(e) {
     closeModal();
   } catch (err) {
     alert(`회원정보 삭제 과정에서 오류가 발생하였습니다: ${err}`);
+  }
+}
+
+
+function updateCountsAfterDeletion(role) {
+  // 총 사용자 수 감소
+  let currentUsersCount = parseInt(usersCount.innerText.replace(/,/g, ''));
+  usersCount.innerText = addCommas(--currentUsersCount);
+
+  // 삭제된 사용자가 관리자였다면, 관리자 수도 감소
+  if (role === "Admin") {
+    let currentAdminCount = parseInt(adminCount.innerText.replace(/,/g, ''));
+    adminCount.innerText = addCommas(--currentAdminCount);
   }
 }
 
@@ -161,4 +208,71 @@ function keyDownCloseModal(e) {
   if (e.keyCode === 27) {
     closeModal();
   }
+}
+
+async function createPagination() {
+
+  const totalUsers = await Api.get("/users");
+  console.log("페이징"+totalUsers);
+
+  const totalPages = totalUsers.totalPages; // 'totalPages' 키에 접근
+
+  const paginationContainer = document.getElementById('pagination');
+  paginationContainer.innerHTML = ''; // 기존의 페이지네이션 버튼을 초기화합니다.
+
+  for(let i = 0; i < totalPages; i++) {
+    const button = document.createElement('button');
+    button.innerText = i + 1;
+    button.addEventListener('click', function() {
+      pageNumber = i;
+      insertUsers();
+    });
+    button.style.marginRight= "5px";
+    button.style.padding = "10px 20px";
+    button.style.border = "none";
+    button.style.outline ="none";
+    button.style.fontSize = "16px";
+    button.style.fontWeight = "600";
+    button.style.color = "white";
+    button.style.transition = "all 0.3s ease";
+    button.style.boxShadow = "0 4px 6px rgba(255, 121, 180, 0.4)";
+    button.style.borderRadius = "25px"
+    button.style.cursor = "pointer";
+    button.style.backgroundImage = "linear-gradient(to right, #89d4cf 0%, #6fb8df 100%)";
+    paginationContainer.appendChild(button);
+  }
+}
+
+async function fetchAllUsers() {
+  let isLastPage = false;
+  let number = 0;
+  const size = 100; // 원하는 페이지 크기 설정
+  let allUsers = [];
+  const summary = {
+    usersCount: 0,
+    adminCount: 0,
+  };
+
+  while (!isLastPage) {
+    const response = await Api.get(`/users?page=${number}&size=${size}`);
+    // API 응답 구조에 따라 데이터와 '마지막 페이지 여부'를 확인
+    // 예시에서는 response.data가 사용자 배열이고, response.lastPage로 마지막 페이지 여부를 판단한다고 가정
+    allUsers = allUsers.concat(response.content);
+    isLastPage = response.last; // 실제 API 응답에 따라 조정 필요
+
+    number++; // 다음 페이지로
+  }
+
+  for (const user of allUsers) {
+    const { type } = user;
+    summary.usersCount += 1;
+
+    if (type.includes('Admin')) {
+      summary.adminCount += 1;
+    }
+  }
+
+  usersCount.innerText = addCommas(summary.usersCount);
+  adminCount.innerText = addCommas(summary.adminCount);
+
 }

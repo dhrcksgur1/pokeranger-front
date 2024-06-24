@@ -9,10 +9,12 @@
 
 <button onclick="sendGetRequest()">GET 요청 보내기</button>
 
+
+</body>
 <script>
     function sendGetRequest() {
         // fetch 함수를 사용하여 GET 요청을 보냅니다.
-        fetch('http://localhost:8080/users/usersAll')
+        fetch('http://localhost:8080/users')
             .then(response => {
                 // 응답이 성공적으로 완료된 경우
                 if (!response.ok) {
@@ -31,5 +33,4 @@
     }
 </script>
 
-</body>
 </html>
